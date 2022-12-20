@@ -2,28 +2,29 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db.config');
 
 
-//create a sequelize model for user
-const User = sequelize.define('users', {
+//create a sequelize model for players
+const Players = sequelize.define('players', {
     id: {
         type: DataTypes.INTEGER,
-        autoIncrement: true,
-        unique: true,
+        allowNull: false,
         primaryKey: true,
+        autoIncrement: true
+    },
+    team_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: 'teams', key: 'id' }
     },
     name: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    status: {
+    age: {
         type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    role: {
+        type: DataTypes.STRING,
         allowNull: false
     },
     created_at: {
@@ -35,11 +36,11 @@ const User = sequelize.define('users', {
         allowNull: false
     }
 }, {
-    tableName: 'users',
+    tableName: 'players',
     createdAt: 'created_at',
     updatedAt: 'updated_at',
-    freezeTableName : true,
-    underscored : true
+    freezeTableName: true,
+    underscored: true
 });
 
-module.exports = User;
+module.exports = Players;
