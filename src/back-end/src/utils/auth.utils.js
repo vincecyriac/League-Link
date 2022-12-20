@@ -3,25 +3,27 @@ const { sign } = require("jsonwebtoken");
 const generateToken = (userData) => {
     const accessToken = sign(
         {
-            id: userData.id,
-            password: userData.password
+            email: userData.email,
+            password: userData.password,
+            type : 0
         },
         process.env.JWT_KEY,
         { expiresIn: "1h" }
     );
     const refreshToken = sign(
         {
-            id: userData.user_id,
-            password: userData.password
+            email: userData.email,
+            password: userData.password,
+            type : 1
         },
         process.env.JWT_KEY,
-        { expiresIn: "7d" }
+        { expiresIn: "1d" }
     );
     return { 
+        userId : userData.id,
+        email : userData.email,
         accessToken: accessToken, 
-        refreshToken: refreshToken,
-        userId : userData.user_id,
-        email : userData.email
+        refreshToken: refreshToken
     }
 }
 

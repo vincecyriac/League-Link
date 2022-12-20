@@ -33,7 +33,9 @@ const User = sequelize.define('users', {
 }, {
     tableName: 'users',
     createdAt: 'created_at',
-    updatedAt: 'updated_at'
+    updatedAt: 'updated_at',
+    freezeTableName : true,
+    underscored : true
 });
 
 module.exports = User;

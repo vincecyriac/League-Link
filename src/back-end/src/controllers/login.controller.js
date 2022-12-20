@@ -40,4 +40,20 @@ const getCurrentUser = async (req, res, next) => {
     return;
 }
 
-module.exports = { login, getCurrentUser }
+const refreshToken = async (req, res, next) => {
+    userService.userByEmail(req.tokenData.email)
+        .then((userResponse) => {
+            if (userResponse && userResponse.status == 1) {
+                res.send(authUtils.generateToken(userResponse));
+            }
+            else {
+                throw new NotFound('Something wrong with loggedin user')
+            }
+        })
+        .catch((error) => {
+            next(error);
+        });
+    return;
+}
+
+module.exports = { login, getCurrentUser, refreshToken }
