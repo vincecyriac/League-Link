@@ -4,6 +4,7 @@ const generateToken = (userData) => {
     const accessToken = sign(
         {
             email: userData.email,
+            id : userData.id,
             password: userData.password,
             type : 0
         },
