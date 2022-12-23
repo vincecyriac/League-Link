@@ -11,7 +11,7 @@ const Tournaments = sequelize.define('tournaments', {
         field: 'id'
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
     user_id: {
@@ -19,13 +19,26 @@ const Tournaments = sequelize.define('tournaments', {
         allowNull: false,
         references: { model: 'users', key: 'id' }
     },
-    location: {
-        type: DataTypes.STRING(255),
+    start_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
+    end_date: {
+        type: DataTypes.DATEONLY,
         allowNull: false
     },
     number_of_teams: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    image_url: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue : 1
     },
     created_at: {
         type: DataTypes.DATE,

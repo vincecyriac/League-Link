@@ -10,14 +10,23 @@ const Teams = sequelize.define('teams', {
         primaryKey: true,
         autoIncrement: true
     },
-    tournament_id: {
+    user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: 'tournaments', key: 'id' }
+        references: { model: 'users', key: 'id' }
     },
     name: {
         type: DataTypes.STRING(255),
         allowNull: false
+    },
+    image_url: {
+        type: DataTypes.STRING(45),
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue : 1
     },
     created_at: {
         type: DataTypes.DATE,

@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db.config');
+const Tournaments = require('../models/tournaments.model')
 
 
 //create a sequelize model for user
@@ -11,20 +12,21 @@ const User = sequelize.define('users', {
         primaryKey: true,
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
     email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
     password: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
     status: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue : 1
     },
     created_at: {
         type: DataTypes.DATE,
@@ -43,3 +45,5 @@ const User = sequelize.define('users', {
 });
 
 module.exports = User;
+
+User.hasMany(Tournaments, { foreignKey : 'id', as : 'tournaments'})

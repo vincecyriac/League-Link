@@ -2,41 +2,48 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db.config');
 
 
-//create a sequelize model for matches
-const Matches = sequelize.define('matches', {
+//create a sequelize model for tournament-teams
+const TournamentTeams = sequelize.define('tournament_teams', {
     id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         primaryKey: true,
         autoIncrement: true
     },
+    team_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: { model: 'teams', key: 'id' }
+    },
     tournament_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: { model: 'tournaments', key: 'id' }
     },
-    team1_id: {
+    match_count: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: 'teams', key: 'id' }
+        defaultValue : 0
     },
-    team2_id: {
+    win_count: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: { model: 'teams', key: 'id' }
+        defaultValue : 0
     },
-    start_time: {
-        type: DataTypes.DATE,
-        allowNull: false
-    },
-    location: {
-        type: DataTypes.STRING(255),
-        allowNull: false
-    },
-    winner_team_id: {
+    draw_count: {
         type: DataTypes.INTEGER,
-        allowNull: true,
-        references: { model: 'teams', key: 'id' }
+        allowNull: false,
+        defaultValue : 0
+    },
+    lose_count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue : 0
+    },
+    points: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue : 0
     },
     status: {
         type: DataTypes.TINYINT,
@@ -52,7 +59,7 @@ const Matches = sequelize.define('matches', {
         allowNull: false
     }
 }, {
-    tableName: 'matches',
+    tableName: 'tournament_teams',
     createdAt: 'created_at',
     updatedAt: 'updated_at',
     freezeTableName: true,

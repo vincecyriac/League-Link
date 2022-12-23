@@ -16,16 +16,13 @@ const Players = sequelize.define('players', {
         references: { model: 'teams', key: 'id' }
     },
     name: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false
     },
-    age: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-    role: {
-        type: DataTypes.STRING,
-        allowNull: false
+    status: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue : 1
     },
     created_at: {
         type: DataTypes.DATE,

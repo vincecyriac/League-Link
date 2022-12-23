@@ -15,11 +15,6 @@ const Scorecard = sequelize.define('scorecard', {
         allowNull: false,
         references: { model: 'matches', key: 'id' }
     },
-    team_id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: { model: 'teams', key: 'id' }
-    },
     player_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -32,6 +27,11 @@ const Scorecard = sequelize.define('scorecard', {
     wickets: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    status: {
+        type: DataTypes.TINYINT,
+        allowNull: false,
+        defaultValue : 1
     },
     created_at: {
         type: DataTypes.DATE,
