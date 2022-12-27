@@ -1,0 +1,161 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/db.config');
+
+//create a sequelize model for user
+const User = sequelize.define('users', {
+    id          : { type: DataTypes.INTEGER, autoIncrement: true, unique: true, primaryKey: true },
+    name        : { type: DataTypes.STRING(255), allowNull: false },
+    email       : { type: DataTypes.STRING(255), allowNull: false }, 
+    password    : { type: DataTypes.STRING(255), allowNull: false },
+    status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at  : { type: DataTypes.DATE, allowNull: false },
+    updated_at  : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'users',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+//create a sequelize model for teams
+const Teams = sequelize.define('teams', {
+    id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
+    name        : { type: DataTypes.STRING(255), allowNull: false },
+    image_url   : { type: DataTypes.STRING(45), allowNull: false },
+    status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at  : { type: DataTypes.DATE, allowNull: false },
+    updated_at  : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'teams',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+//create a sequelize model for tournaments
+const Tournaments = sequelize.define('tournaments', {
+    id              : { type: DataTypes.INTEGER, autoIncrement: true, unique: true, primaryKey: true, field: 'id' },
+    name            : { type: DataTypes.STRING(255), allowNull: false },
+    user_id         : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
+    start_date      : { type: DataTypes.DATEONLY, allowNull: false },
+    end_date        : { type: DataTypes.DATEONLY, allowNull: false },
+    number_of_teams : { type: DataTypes.INTEGER, allowNull: false },
+    image_url       : { type: DataTypes.STRING(255), allowNull: false },
+    status          : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at      : { type: DataTypes.DATE, allowNull: false },
+    updated_at      : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'tournaments',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+//create a sequelize model for tournament-teams
+const TournamentTeams = sequelize.define('tournament_teams', {
+    id              : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    team_id         : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
+    tournament_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'tournaments', key: 'id' } },
+    pool            : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    match_count     : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    win_count       : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    draw_count      : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    lose_count      : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    points          : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    status          : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at      : { type: DataTypes.DATE, allowNull: false },
+    updated_at      : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName: 'tournament_teams',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    freezeTableName: true,
+    underscored: true
+});
+
+//create a sequelize model for matches
+const Matches = sequelize.define('matches', {
+    id              : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    tournament_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'tournaments', key: 'id' } },
+    team1_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
+    team2_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
+    start_time      : { type: DataTypes.DATE, allowNull: false },
+    location        : { type: DataTypes.STRING(255), allowNull: false },
+    winner_team_id  : { type: DataTypes.INTEGER, allowNull: true, references: { model: 'teams', key: 'id' } },
+    status          : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at      : { type: DataTypes.DATE, allowNull: false },
+    updated_at      : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'matches',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+//create a sequelize model for players
+const Players = sequelize.define('players', {
+    id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    team_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
+    name        : { type: DataTypes.STRING(255), allowNull: false },
+    status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at  : { type: DataTypes.DATE, allowNull: false },
+    updated_at  : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'players',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+const Scorecard = sequelize.define('scorecard', {
+    id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    match_id    : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'matches', key: 'id' } },
+    player_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'players', key: 'id' } },
+    runs        : { type: DataTypes.INTEGER, allowNull: false },
+    wickets     : { type: DataTypes.INTEGER, allowNull: false },
+    status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
+    created_at  : { type: DataTypes.DATE, allowNull: false },
+    updated_at  : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName       : 'scorecard',
+    createdAt       : 'created_at',
+    updatedAt       : 'updated_at',
+    freezeTableName : true,
+    underscored     : true
+});
+
+//User table associations
+User.hasMany(Tournaments, { foreignKey : 'user_id', as : 'tournaments'})
+User.hasMany(Teams, { foreignKey : 'user_id', as : 'teams'})
+
+//Teams table associations
+Teams.hasMany(Players, { foreignKey : 'team_id', as : 'players'})
+Teams.belongsTo(User)
+Teams.belongsToMany(Tournaments, { through: 'tournament_teams', foreignKey: 'team_id' });
+
+//Tournament table associations
+Tournaments.hasMany( Matches, {foreignKey : 'tournament_id', as : 'matches'})
+Tournaments.belongsTo(User, { foreignKey: 'user_id', });
+Tournaments.belongsToMany(Teams, { through: 'tournament_teams', foreignKey: 'tournament_id' });
+
+//Matches table association
+Matches.belongsTo(Tournaments);
+Matches.belongsTo(Teams)
+Matches.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
+
+//Players table associations
+Players.belongsTo(Teams)
+Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
+
+//Scorecard table associations
+Scorecard.belongsTo(Players)
+Scorecard.belongsTo(Matches)
+
+module.exports = {User, Teams, Tournaments, TournamentTeams, Matches, Players, Scorecard}
+

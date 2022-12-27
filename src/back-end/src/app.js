@@ -2,6 +2,7 @@ const express = require('express');
 const handleErrors = require('./middlewares/handle-errors.middleware');
 const loginRouter = require('./routes/login.routes')
 const userRouter = require('./routes/users.routes')
+const teamsRouter = require('./routes/teams.routes')
 const app = require("./server");
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -19,6 +20,7 @@ app.use(cors({
 
 app.use('/login', loginRouter)
 app.use('/user', userRouter)
+app.use('/teams', teamsRouter)
 app.get('*', function (req, res, next) {
     next(new NotFound('not found'));
 });
