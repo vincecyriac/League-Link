@@ -1,14 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const teamsController = require('../controllers/teams.controller')
-const { isAuthenticated } = require('../middlewares/auth.middleware')
-const { uploadToS3 } = require('../utils/s3.utils')
-const multer  = require('multer')
-const upload = multer()
 
+// Import the controller for teams
+const teamsController = require('../controllers/teams.controller');
 
-router.get('/',isAuthenticated, teamsController.getAllTeams);
-router.get('/:teamId',isAuthenticated, teamsController.getTeamById);
-router.post('/',isAuthenticated,upload.single('image'), uploadToS3, teamsController.createTeam);
+// Import the middleware for authentication
+const { isAuthenticated } = require('../middlewares/auth.middleware');
+
+// Import the utility for uploading to S3
+const { uploadToS3 } = require('../utils/s3.utils');
+
+// Import Multer for handling file uploads
+const multer = require('multer');
+
+// Initialize Multer
+const upload = multer();
+
+// GET request to get all teams
+router.get('/', isAuthenticated, teamsController.getAllTeams);
+
+// GET request to get a team by ID
+router.get('/:teamId', isAuthenticated, teamsController.getTeamById);
+
+// POST request to create a new team
+router.post('/', isAuthenticated, upload.single('image'), uploadToS3, teamsController.createTeam);
 
 module.exports = router;
