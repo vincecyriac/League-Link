@@ -8,7 +8,7 @@ const handleErrors = (err, req, res, next) => {
         })
     }
     return res.status(500).json({
-        errorCode : 5000,
+        errorCode : 500,
         message: err.message
     })
 }

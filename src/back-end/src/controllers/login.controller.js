@@ -57,3 +57,4 @@ const refreshToken = async (req, res, next) => {
 }
 
 module.exports = { login, getCurrentUser, refreshToken }
+

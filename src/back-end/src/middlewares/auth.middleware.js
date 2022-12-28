@@ -1,6 +1,12 @@
 const userService = require('../services/users.service')
 const { Unauthorized } = require("../utils/errors.utils");
 const { verify } = require("jsonwebtoken");
+const AWS = require('aws-sdk')
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+})
 
 const isAuthenticated = async (req, res, next) => {
     const accessToken = req.header('Authorization');
