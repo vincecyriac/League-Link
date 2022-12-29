@@ -1,5 +1,4 @@
 const userService = require('../services/users.service');
-const { Unauthorized, BadRequest } = require("../utils/errors.utils");
 const { verify } = require("jsonwebtoken");
 const AWS = require('aws-sdk');
 
@@ -17,28 +16,29 @@ const isAuthenticated = async (req, res, next) => {
     // If the access token is not present or does not start with 'LEAGUE_LINK',
     // return an error indicating that the user is not authorized
     if (!accessToken || !accessToken.startsWith('LEAGUE_LINK')) {
-        return next(new Unauthorized('You are not authorized'));
-    }
-
-    // Verify the access token
-    try {
-        // Split the access token into two parts: the prefix 'LEAGUE_LINK' and the actual token
-        const token = accessToken.split(' ')[1];
-        // Verify the token using the JWT key
-        const tokenData = verify(token, process.env.JWT_KEY);
-
-        // If the token is not of type 0, return an error indicating that the token is invalid
-        if (tokenData.type !== 0) {
-            return next(new Unauthorized('Invalid Token'));
+        res.status(401).send({ message: "You are not authorized" });
+    } else{
+        // Verify the access token
+        try {
+            // Split the access token into two parts: the prefix 'LEAGUE_LINK' and the actual token
+            const token = accessToken.split(' ')[1];
+            // Verify the token using the JWT key
+            const tokenData = verify(token, process.env.JWT_KEY);
+    
+            // If the token is not of type 0, return an error indicating that the token is invalid
+            if (tokenData.type !== 0) {
+                res.status(401).send({ message: "You are not authorized" });
+            }
+    
+            // If the token is valid, attach the token data to the request object and call the next middleware
+            req.tokenData = tokenData;
+            next();
+        } catch (error) {
+            // If there was an error verifying the token, return an error indicating that the token is invalid
+            res.status(401).send({ message: "You are not authorized" });
         }
-
-        // If the token is valid, attach the token data to the request object and call the next middleware
-        req.tokenData = tokenData;
-        next();
-    } catch (error) {
-        // If there was an error verifying the token, return an error indicating that the token is invalid
-        return next(new Unauthorized('Invalid Token'));
     }
+
 };
 
 // Middleware function to check if the provided refresh token is valid
@@ -49,7 +49,7 @@ const isValidRefreshToken = async (req, res, next) => {
 
         // If the token is not of type 1, return an error indicating that the session has expired
         if (tokenData.type !== 1) {
-            return next(new Unauthorized('Session expired'));
+            res.status(401).send({ message: "Session expired" });
         }
 
         // If the token is valid, attach the token data to the request object and call the next middleware
@@ -57,7 +57,7 @@ const isValidRefreshToken = async (req, res, next) => {
         next();
     } catch (error) {
         // If there was an error verifying the token, return an error indicating that the session has expired
-        return next(new Unauthorized('Session expired'));
+        res.status(400).send({ message: "Something went wrong", trace : process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log"});
     }
 };
 

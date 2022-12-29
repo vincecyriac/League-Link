@@ -28,7 +28,7 @@ async function getTeamById(userId, teamId) {
             {
                 model: Players,
                 as: "players",
-                attributes: ["name", "id"]
+                // attributes: ["name", "id"]
             }
         ]
     });
@@ -58,12 +58,41 @@ async function createTeam(teamData) {
     } catch (error) {
         // If there is an error, roll back the transaction and throw a bad request error
         await transaction.rollback();
-        throw new BadRequest(error, 500);
+        return error
     }
 }
 
-module.exports = {
-    getAllTeams,
-    getTeamById,
-    createTeam
-};
+async function updateTeam(teamId, teamData) {
+    // Start a transaction
+    const transaction = await sequelize.transaction();
+
+    try {
+        // Update the team with the new data
+        await Teams.update(teamData, {
+            where: { id: teamId },
+            transaction,
+        });
+
+        // Delete all players associated with the team
+        await Players.destroy({
+            where: { team_id: teamId },
+            transaction
+        });
+
+        // Create a new set of players for the team
+        const players = teamData.players.map(player => ({ ...player, team_id: teamId }));
+        await Players.bulkCreate(players, { transaction });
+
+        // If there are no errors, commit the transaction
+        await transaction.commit();
+
+        return teamId;
+    } catch (error) {
+        // If there is an error, roll back the transaction and throw a bad request error
+        await transaction.rollback();
+        return error
+    }
+}
+
+
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam };

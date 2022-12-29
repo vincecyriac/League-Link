@@ -1,34 +1,29 @@
 const userService = require("../services/users.service");
 const { compareSync } = require("bcrypt");
-const { Forbidden, NotFound, BadRequest } = require('../utils/errors.utils');
 const authUtils = require('../utils/auth.utils');
 
 // Function to handle login request
 const login = async (req, res, next) => {
     // Check if email is provided in request body
     if (!req.body.email) {
-        throw new BadRequest("Email is required", 1001);
+        res.status(400).send({ message: "please enter an email" });
     }
     try {
         // Get user by email
         const userResponse = await userService.getUserByEmail(req.body.email);
         // Check if user exists
         if (!userResponse) {
-            throw new Forbidden("Invalid credentials", 1000);
+            res.status(403).send({ message: "Invalid Credentials" });
         }
         // Check if password is valid
         const isValidPassword = compareSync(req.body.password, userResponse.password);
-        if (!isValidPassword) {
-            throw new Forbidden("Invalid credentials", 1000);
-        }
-        // Check if user is active
-        if (userResponse.status !== 1) {
-            throw new Forbidden("User is inactive", 1000);
+        if (!isValidPassword || userResponse.status !== 1) {
+            res.status(403).send({ message: "Invalid Credentials" });
         }
         // Generate and send JWT token
         res.send(authUtils.generateToken(userResponse));
     } catch (error) {
-        next(error);
+        res.status(400).send({ message: "Something went wrong", trace : process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log"});
     }
 };
 
@@ -39,12 +34,12 @@ const getCurrentUser = async (req, res, next) => {
         const userResponse = await userService.getUserById(req.tokenData.id);
         // Check if user exists
         if (!userResponse) {
-            throw new NotFound("Something wrong with logged in user");
+            res.status(404).send({ message: "Something wrong with logged in user" });
         }
         res.send(userResponse);
     } catch (error) {
         // return bad request
-        throw new BadRequest(error, 500);
+        res.status(400).send({ message: "Something went wrong" });
     }
 };
 
@@ -54,18 +49,14 @@ const refreshToken = async (req, res, next) => {
         // Get user by email from JWT token
         const userResponse = await userService.getUserByEmail(req.tokenData.email);
         // Check if user exists
-        if (!userResponse) {
-            throw new NotFound("Something wrong with logged in user");
-        }
-        // Check if user is active
-        if (userResponse.status !== 1) {
-            throw new Forbidden("User is inactive", 1000);
+        if (!userResponse || userResponse.status !== 1) {
+            res.status(404).send({ message: "Something wrong with logged in user" });
         }
         // Generate and send new JWT token
         res.send(authUtils.generateToken(userResponse));
     } catch (error) {
         // return bad request
-        throw new BadRequest(error, 500);
+        res.status(400).send({ message: "Something went wrong" });
     }
 };
 

@@ -25,4 +25,7 @@ router.get('/:teamId', isAuthenticated, teamsController.getTeamById);
 // POST request to create a new team
 router.post('/', isAuthenticated, upload.single('image'), uploadToS3, teamsController.createTeam);
 
+// PUT request to update a team
+router.put('/:teamId', isAuthenticated, upload.single('image'), uploadToS3, teamsController.updateTeam);
+
 module.exports = router;

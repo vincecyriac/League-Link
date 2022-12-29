@@ -1,5 +1,4 @@
 const teamsService = require('../services/teams.service');
-const { NotFound } = require('../utils/errors.utils');
 const { getSignedUrl } = require('../utils/s3.utils');
 
 // Get all teams for a user
@@ -12,7 +11,7 @@ const getAllTeams = async (req, res, next) => {
         res.send(teamsResponse);
     } catch (error) {
         // return bad request
-        throw new BadRequest(error, 500);
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
     }
 };
 
@@ -31,11 +30,11 @@ const getTeamById = async (req, res, next) => {
             res.send(team);
         } else {
             // If the team was not found, throw a NotFound error
-            throw new NotFound('Team not found', 2001);
+            res.status(404).send({ message: "Team not found" });
         }
     } catch (error) {
         // return bad request
-        throw new BadRequest(error, 500);
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
     }
 };
 
@@ -47,13 +46,38 @@ const createTeam = async (req, res, next) => {
 
         // Call the service function to create the team
         const team = await teamsService.createTeam(req.body);
-
-        // Send a response back to the client with the created team's ID
-        res.send({ message: 'Team created', id: team.id });
+        if (team instanceof Error)
+            return res.status(400).send({ message: "failed to create team", errors: team.errors.map(x => x.message) || team});
+        else
+            // Send a response back to the client with the created team's ID
+            res.send({ message: 'Team created', id: team.id });
     } catch (error) {
         // return bad request
-        throw new BadRequest(error, 500);
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
     }
 };
 
-module.exports = { getAllTeams, getTeamById, createTeam };
+const updateTeam = async (req, res, next) => {
+    try {
+        // Call the service function to update the team
+        const teamExist = await teamsService.getTeamById(req.tokenData.id, req.params.teamId);
+        if (!teamExist) {
+            // Return error response if email is already in use
+            return res.status(404).send({ message: "Team not found" });
+        }
+        //update the team
+        const team = await teamsService.updateTeam(req.params.teamId, req.body)
+        if (team instanceof Error)
+            return res.status(400).send({ message: "failed to update team", errors: team.errors?.map(x => x.message) || team});
+        else
+            // Return success response with team ID
+            res.send({ message: "Team updated", id: team});
+
+    } catch (error) {
+        console.log(error)
+        // If there is an error, return a bad request response
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+    }
+};
+
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam };

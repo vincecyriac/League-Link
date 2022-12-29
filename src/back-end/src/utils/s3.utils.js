@@ -1,5 +1,4 @@
 const AWS = require('aws-sdk');
-const { BadRequest } = require('../utils/errors.utils');
 
 // Create an S3 client instance
 const s3 = new AWS.S3({
@@ -11,13 +10,10 @@ const s3 = new AWS.S3({
 
 // Middleware function to handle file uploads to S3
 const uploadToS3 = async (req, res, next) => {
-    // Set a default value for the image_url field in the request body
-    req.body.image_url = "data.Key";
+    
 
-    // If a file was not included in the request, continue to the next middleware function
-    if (!req.file) {
-        return next();
-    }
+    req.body.image_url = "data.Key";
+    return next();
 
     // Set up the parameters for the S3 upload
     const uploadParams = {
@@ -34,7 +30,7 @@ const uploadToS3 = async (req, res, next) => {
         req.body.image_url = data.Key;
     } catch (err) {
         // If the upload fails, throw a BadRequest error
-        throw new BadRequest(err, 400);
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
     }
 
     // Continue to the next middleware function

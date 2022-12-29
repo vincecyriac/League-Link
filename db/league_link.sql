@@ -191,3 +191,31 @@ COLLATE = utf8mb4_0900_ai_ci;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+-- -----------------------------------------------------
+-- UPDATES DEC 29 2022
+-- -----------------------------------------------------
+
+ALTER TABLE `league_link`.`teams` ADD COLUMN `manager` VARCHAR(100) NOT NULL AFTER `image_url`;
+
+ALTER TABLE `league_link`.`players` 
+ADD COLUMN `phone` VARCHAR(13) NOT NULL AFTER `name`,
+ADD COLUMN `user_id` INT NOT NULL AFTER `phone`,
+ADD INDEX `fk_players_1_idx` (`user_id` ASC) VISIBLE;
+;
+ALTER TABLE `league_link`.`players` 
+ADD CONSTRAINT `fk_players_1`
+  FOREIGN KEY (`user_id`)
+  REFERENCES `league_link`.`users` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
+ALTER TABLE `league_link`.`players` 
+DROP FOREIGN KEY `players_ibfk_1`;
+ALTER TABLE `league_link`.`players` 
+CHANGE COLUMN `team_id` `team_id` INT NULL ;
+ALTER TABLE `league_link`.`players` 
+ADD CONSTRAINT `players_ibfk_1`
+  FOREIGN KEY (`team_id`)
+  REFERENCES `league_link`.`teams` (`id`);

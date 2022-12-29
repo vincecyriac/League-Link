@@ -24,6 +24,7 @@ const Teams = sequelize.define('teams', {
     user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
     name        : { type: DataTypes.STRING(255), allowNull: false },
     image_url   : { type: DataTypes.STRING(45), allowNull: false },
+    manager     : { type: DataTypes.STRING(100), allowNull: false },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at  : { type: DataTypes.DATE, allowNull: false },
     updated_at  : { type: DataTypes.DATE, allowNull: false }
@@ -102,6 +103,8 @@ const Players = sequelize.define('players', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     team_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
     name        : { type: DataTypes.STRING(255), allowNull: false },
+    phone       : { type: DataTypes.STRING(13), allowNull: false },
+    user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at  : { type: DataTypes.DATE, allowNull: false },
     updated_at  : { type: DataTypes.DATE, allowNull: false }
@@ -133,6 +136,7 @@ const Scorecard = sequelize.define('scorecard', {
 //User table associations
 User.hasMany(Tournaments, { foreignKey : 'user_id', as : 'tournaments'})
 User.hasMany(Teams, { foreignKey : 'user_id', as : 'teams'})
+User.hasMany(Players, { foreignKey : 'user_id', as : 'players'})
 
 //Teams table associations
 Teams.hasMany(Players, { foreignKey : 'team_id', as : 'players'})
@@ -150,7 +154,7 @@ Matches.belongsTo(Teams)
 Matches.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
 
 //Players table associations
-Players.belongsTo(Teams)
+Players.belongsTo(User)
 Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
 
 //Scorecard table associations

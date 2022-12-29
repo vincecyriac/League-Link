@@ -1,12 +1,11 @@
 const express = require('express');
-const handleErrors = require('./middlewares/handle-errors.middleware');
 const loginRouter = require('./routes/login.routes');
 const userRouter = require('./routes/users.routes');
 const teamsRouter = require('./routes/teams.routes');
 const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { NotFound } = require('./utils/errors.utils');
+const { route } = require('./server');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -31,12 +30,9 @@ app.use('/user', userRouter);
 app.use('/teams', teamsRouter);
 
 // Catch-all route to handle requests to routes that don't exist
-app.get('*', function(req, res, next) {
-  next(new NotFound('Route not found'));
+app.get('*', function(req, res) {
+  res.status(400).send({ message: "Path not found" });
 });
-
-// Use the handleErrors middleware to handle any errors thrown in the preceding routes
-app.use(handleErrors);
 
 // Export the app module
 module.exports = app;
