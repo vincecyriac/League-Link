@@ -13,7 +13,7 @@ const createUser = async (req, res, next) => {
     // Create new user
     const user = await userService.createUser(req.body);
     if (user instanceof Error)
-      return res.status(400).send({ message: "failed to create user", errors: user.errors.map(x => x.message) });
+      return res.status(400).send({ message: "failed to create user, Please check yout input"});
     else
       // Return success response with user ID
       res.send({ message: "User created", id: user.id });

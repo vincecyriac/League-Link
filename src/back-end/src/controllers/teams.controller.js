@@ -1,5 +1,4 @@
 const teamsService = require('../services/teams.service');
-const { getSignedUrl } = require('../utils/s3.utils');
 
 // Get all teams for a user
 const getAllTeams = async (req, res, next) => {
@@ -22,11 +21,6 @@ const getTeamById = async (req, res, next) => {
         const team = await teamsService.getTeamById(req.tokenData.id, req.params.teamId);
 
         if (team) {
-            // If the team was found, get a signed URL for the team image
-            const signedUrl = await getSignedUrl(team.image_url);
-
-            // Add the signed URL to the team object and send it back to the client
-            team.image_url = signedUrl;
             res.send(team);
         } else {
             // If the team was not found, throw a NotFound error
@@ -47,7 +41,7 @@ const createTeam = async (req, res, next) => {
         // Call the service function to create the team
         const team = await teamsService.createTeam(req.body);
         if (team instanceof Error)
-            return res.status(400).send({ message: "failed to create team", errors: team.errors.map(x => x.message) || team});
+            return res.status(400).send({ message: "failed to create team, Please check yout input"});
         else
             // Send a response back to the client with the created team's ID
             res.send({ message: 'Team created', id: team.id });
@@ -68,7 +62,7 @@ const updateTeam = async (req, res, next) => {
         //update the team
         const team = await teamsService.updateTeam(req.params.teamId, req.body)
         if (team instanceof Error)
-            return res.status(400).send({ message: "failed to update team", errors: team.errors?.map(x => x.message) || team});
+            return res.status(400).send({ message: "failed to update team, Please check yout input"});
         else
             // Return success response with team ID
             res.send({ message: "Team updated", id: team});

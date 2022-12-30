@@ -2,16 +2,29 @@ const { Teams, Players } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 
 // Retrieves all teams that belong to a particular user
-async function getAllTeams(userId, teamId) {
+async function getAllTeams(userId) {
     // Find all teams with status 1 and the given user ID
-    const teams = await Teams.findAll({
+    const teams = await Teams.findAndCountAll({
         where: {
             status: 1,
             user_id: userId
-        }
+        },
+        attributes: ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"],
+        order: [
+            ['updated_at', 'DESC']
+        ]
     });
 
+    // Modify each team to include a signed URL for their image
+    const modifiedTeams = teams.rows.map(async team => {
+        const signedUrl = await team.getSignedUrl();
+        return { ...team.dataValues, image_url: signedUrl };
+    });
+
+    // Wait for all modified teams to be processed and return the response
+    teams.rows = await Promise.all(modifiedTeams);
     return teams;
+
 }
 
 // Retrieves a team by ID, along with its players
@@ -24,14 +37,21 @@ async function getTeamById(userId, teamId) {
             user_id: userId,
             id: teamId
         },
+        attributes: ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"],
         include: [
             {
                 model: Players,
                 as: "players",
-                // attributes: ["name", "id"]
+                attributes: ["id", "name", "phone"],
+                where: {
+                    status: 1
+                },
+                required: false
             }
         ]
     });
+    const signedUrl = await team.getSignedUrl();
+    team.image_url = signedUrl
 
     return team;
 }
@@ -42,15 +62,7 @@ async function createTeam(teamData) {
     const transaction = await sequelize.transaction();
     try {
         // Create the team with the given data and include its players in the transaction
-        const team = await Teams.create(teamData, {
-            include: [
-                {
-                    model: Players,
-                    as: "players"
-                }
-            ],
-            transaction
-        });
+        const team = await Teams.create(teamData, { transaction });
 
         // If the team is successfully created, commit the transaction
         await transaction.commit();
@@ -72,16 +84,6 @@ async function updateTeam(teamId, teamData) {
             where: { id: teamId },
             transaction,
         });
-
-        // Delete all players associated with the team
-        await Players.destroy({
-            where: { team_id: teamId },
-            transaction
-        });
-
-        // Create a new set of players for the team
-        const players = teamData.players.map(player => ({ ...player, team_id: teamId }));
-        await Players.bulkCreate(players, { transaction });
 
         // If there are no errors, commit the transaction
         await transaction.commit();

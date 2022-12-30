@@ -2,6 +2,7 @@ const express = require('express');
 const loginRouter = require('./routes/login.routes');
 const userRouter = require('./routes/users.routes');
 const teamsRouter = require('./routes/teams.routes');
+const playersRouter = require('./routes/players.routes');
 const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -28,6 +29,9 @@ app.use('/user', userRouter);
 
 // Use the teams router for all teams-related routes
 app.use('/teams', teamsRouter);
+
+// Use the teams router for all teams-related routes
+app.use('/players', playersRouter);
 
 // Catch-all route to handle requests to routes that don't exist
 app.get('*', function(req, res) {

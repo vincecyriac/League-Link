@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db.config');
+const { getSignedUrl } = require('../utils/s3.utils');
 
 //create a sequelize model for user
 const User = sequelize.define('users', {
@@ -155,11 +156,29 @@ Matches.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
 
 //Players table associations
 Players.belongsTo(User)
+Players.belongsTo(Teams, {as : 'team'})
 Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
 
 //Scorecard table associations
 Scorecard.belongsTo(Players)
 Scorecard.belongsTo(Matches)
+
+// Define a prototype method for the Teams model that returns a signed URL for the team's image
+Teams.prototype.getSignedUrl = async function () {
+    // Call the getSignedUrl function with the team's image URL as the argument
+    const signedUrl = await getSignedUrl(this.getDataValue('image_url'));
+    // Return the signed URL
+    return signedUrl;
+  };
+  
+  // Define a prototype method for the Tournaments model that returns a signed URL for the tournament's image
+  Tournaments.prototype.getSignedUrl = async function () {
+    // Call the getSignedUrl function with the tournament's image URL as the argument
+    const signedUrl = await getSignedUrl(this.getDataValue('image_url'));
+    // Return the signed URL
+    return signedUrl;
+  };
+  
 
 module.exports = {User, Teams, Tournaments, TournamentTeams, Matches, Players, Scorecard}
 
