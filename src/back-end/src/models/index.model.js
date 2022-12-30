@@ -102,7 +102,7 @@ const Matches = sequelize.define('matches', {
 //create a sequelize model for players
 const Players = sequelize.define('players', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
-    team_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
+    team_id     : { type: DataTypes.INTEGER, allowNull: true, references: { model: 'teams', key: 'id' } },
     name        : { type: DataTypes.STRING(255), allowNull: false },
     phone       : { type: DataTypes.STRING(13), allowNull: false },
     user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },

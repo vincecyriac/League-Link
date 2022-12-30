@@ -26,7 +26,7 @@ async function getAllPlayers(userId) {
 }
 
 // Retrieves a player by ID, along with its team details
-async function getPlayerId(userId, playerId) {
+async function getPlayerById(userId, playerId) {
     // Find a player with status 1, the given user ID and player ID
     const player = await Players.findOne({
         where: {
@@ -39,7 +39,7 @@ async function getPlayerId(userId, playerId) {
             {
                 model: Teams,
                 as: "team",
-                attributes : ["id", "name", "manager", "status"]
+                attributes: ["id", "name", "manager", "status"]
             }
         ]
     });
@@ -63,4 +63,45 @@ async function createPlayers(playersData) {
     }
 }
 
-module.exports = { getAllPlayers, getPlayerId, createPlayers }
+async function updatePlayersTeam(playersData) {
+    const transaction = await sequelize.transaction();
+    try {
+        // Create the team with the given data and include its players in the transaction
+        for (const record of playersData) {
+            const player = await Players.findByPk(record.id)
+            await player.update({ team_id: record.team_id },{ transaction });
+        }
+
+        // If the team is successfully created, commit the transaction
+        await transaction.commit();
+        return
+    } catch (error) {
+        // If there is an error, roll back the transaction and throw a bad request error
+        await transaction.rollback();
+        return error;
+    }
+}
+
+async function updatePlayer(playerId, playerData) {
+    // Start a transaction
+    const transaction = await sequelize.transaction();
+    
+    try {
+        // Update the player with the new data
+        await Players.update(playerData, {
+            where: { id: playerId },
+            transaction,
+        });
+
+        // If there are no errors, commit the transaction
+        await transaction.commit();
+
+        return playerId;
+    } catch (error) {
+        // If there is an error, roll back the transaction and throw a bad request error
+        await transaction.rollback();
+        return error
+    }
+}
+
+module.exports = { getAllPlayers, getPlayerById, createPlayers, updatePlayersTeam, updatePlayer }

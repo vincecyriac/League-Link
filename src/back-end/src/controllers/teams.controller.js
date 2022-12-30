@@ -56,7 +56,7 @@ const updateTeam = async (req, res, next) => {
         // Call the service function to update the team
         const teamExist = await teamsService.getTeamById(req.tokenData.id, req.params.teamId);
         if (!teamExist) {
-            // Return error response if email is already in use
+            // Return error response if team not found
             return res.status(404).send({ message: "Team not found" });
         }
         //update the team
@@ -68,7 +68,6 @@ const updateTeam = async (req, res, next) => {
             res.send({ message: "Team updated", id: team});
 
     } catch (error) {
-        console.log(error)
         // If there is an error, return a bad request response
         res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
     }

@@ -16,4 +16,10 @@ router.get('/:playerId', isAuthenticated, playersController.getplayerById);
 // POST request to create multiple players
 router.post('/', isAuthenticated, playersController.createPlayers);
 
+// PUT request to update team of multiple players
+router.put('/team', isAuthenticated, playersController.updatePlayersTeam);
+
+// PUT request to update individual player data
+router.put('/:playerId', isAuthenticated, playersController.updatePlayer);
+
 module.exports = router;
