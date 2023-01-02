@@ -10,15 +10,15 @@ const s3 = new AWS.S3({
 
 // Middleware function to handle file uploads to S3
 const uploadToS3 = async (req, res, next) => {
-    
-
-    req.body.image_url = "data.Key";
-    return next();
+    // req.body.image_url = "data.Key";
+    // return next();
+    if(!req.file)
+        return res.status(400).send({ message: "failed to create team, Please check yout input"});
 
     // Set up the parameters for the S3 upload
     const uploadParams = {
         Bucket: process.env.S3_BUCKET,
-        Key: `uploads${req.originalUrl}/${Date.now()}.jpg`,
+        Key: `uploads/${req.originalUrl.split("/")[1]}/${Date.now()}.jpg`,
         Body: req.file.buffer,
     };
 
@@ -28,6 +28,29 @@ const uploadToS3 = async (req, res, next) => {
 
         // Update the image_url field in the request body with the S3 key of the uploaded file
         req.body.image_url = data.Key;
+    } catch (err) {
+        // If the upload fails, throw a BadRequest error
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+    }
+
+    // Continue to the next middleware function
+    next();
+};
+
+const deleteFromS3 = async (key) => {
+    // req.body.image_url = "data.Key";
+    // return next();
+
+    // Set up the parameters for the S3 upload
+    const deleteParams = {
+        Bucket: process.env.S3_BUCKET,
+        Key: key
+    };
+
+    try {
+        // Perform the upload to S3
+        const data = await s3.deleteObject(deleteParams).promise();
+        return data
     } catch (err) {
         // If the upload fails, throw a BadRequest error
         res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
@@ -54,4 +77,4 @@ const getSignedUrl = async (key) => {
     }
 };
 
-module.exports = { uploadToS3, getSignedUrl };
+module.exports = { uploadToS3, getSignedUrl, deleteFromS3 };

@@ -53,7 +53,7 @@ const updatePlayersTeam = async (req, res, next) => {
             return res.status(400).send({ message: "Failed to update players team, Please check yout input"});
         else
             // Send a response back to the client
-            res.send({ message: 'Players created'});
+            res.send({ message: 'Players team updated'});
     } catch (error) {
         // return bad request
         res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });

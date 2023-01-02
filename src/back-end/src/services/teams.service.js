@@ -1,5 +1,6 @@
 const { Teams, Players } = require("../models/index.model");
 const sequelize = require("../config/db.config");
+const { deleteFromS3 } = require("../utils/s3.utils")
 
 // Retrieves all teams that belong to a particular user
 async function getAllTeams(userId) {
@@ -69,6 +70,7 @@ async function createTeam(teamData) {
         return team;
     } catch (error) {
         // If there is an error, roll back the transaction and throw a bad request error
+        await deleteFromS3(teamData.image_url)
         await transaction.rollback();
         return error
     }
@@ -80,11 +82,10 @@ async function updateTeam(teamId, teamData) {
 
     try {
         // Update the team with the new data
-        await Teams.update(teamData, {
-            where: { id: teamId },
-            transaction,
-        });
-
+        const team = await Teams.findByPk(teamId)
+        const imageKey = team.image_url
+        await team.update(teamData, { transaction });
+        await deleteFromS3(imageKey)
         // If there are no errors, commit the transaction
         await transaction.commit();
 
