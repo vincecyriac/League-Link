@@ -57,7 +57,7 @@ async function createPlayers(playersData) {
         await transaction.commit();
         return team;
     } catch (error) {
-        // If there is an error, roll back the transaction and throw a bad request error
+        // If there is an error, roll back the transaction and return error
         await transaction.rollback();
         return error
     }
@@ -76,7 +76,7 @@ async function updatePlayersTeam(playersData) {
         await transaction.commit();
         return
     } catch (error) {
-        // If there is an error, roll back the transaction and throw a bad request error
+        // If there is an error, roll back the transaction and return error
         await transaction.rollback();
         return error;
     }
@@ -98,7 +98,7 @@ async function updatePlayer(playerId, playerData) {
 
         return playerId;
     } catch (error) {
-        // If there is an error, roll back the transaction and throw a bad request error
+        // If there is an error, roll back the transaction and return error
         await transaction.rollback();
         return error
     }

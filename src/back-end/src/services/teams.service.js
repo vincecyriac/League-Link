@@ -69,7 +69,7 @@ async function createTeam(teamData) {
         await transaction.commit();
         return team;
     } catch (error) {
-        // If there is an error, roll back the transaction and throw a bad request error
+        // If there is an error, roll back the transaction and delete file form s3 and return error
         await deleteFromS3(teamData.image_url)
         await transaction.rollback();
         return error
@@ -91,7 +91,7 @@ async function updateTeam(teamId, teamData) {
 
         return teamId;
     } catch (error) {
-        // If there is an error, roll back the transaction and throw a bad request error
+        // If there is an error, roll back the transaction and return error
         await transaction.rollback();
         return error
     }
