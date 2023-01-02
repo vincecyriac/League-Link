@@ -10,8 +10,10 @@ const s3 = new AWS.S3({
 
 // Middleware function to handle file uploads to S3
 const uploadToS3 = async (req, res, next) => {
-    // req.body.image_url = "data.Key";
-    // return next();
+    if(process.env.APP_ENV != 'prod'){
+        req.body.image_url = "data.Key";
+        return next();
+    }
     if(!req.file)
         return res.status(400).send({ message: "failed to create team, Please check yout input"});
 
@@ -38,9 +40,6 @@ const uploadToS3 = async (req, res, next) => {
 };
 
 const deleteFromS3 = async (key) => {
-    // req.body.image_url = "data.Key";
-    // return next();
-
     // Set up the parameters for the S3 upload
     const deleteParams = {
         Bucket: process.env.S3_BUCKET,
