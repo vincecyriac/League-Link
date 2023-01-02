@@ -16,6 +16,13 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table schema for table `league_link`
+--
+
+CREATE SCHEMA IF NOT EXISTS `league_link` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
+USE `league_link` ;
+
+--
 -- Table structure for table `match_types`
 --
 
