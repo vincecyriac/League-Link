@@ -6,6 +6,8 @@ const playersRouter = require('./routes/players.routes');
 const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const logger = require('./utils/logger.utils')
+const uuid = require('uuid');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -19,6 +21,14 @@ app.use(express.json());
 app.use(cors({
   origin: ORIGIN,
 }));
+
+
+// Log request details on each API request
+app.use((req, res, next) => {
+  req.id = uuid.v4(); //attach unique id for each request
+  logger.info(`[${req.id}] ${req.method} ${req.path} ${req.ip} ${req.get('user-agent')}`);
+  next()
+});
 
 // Use the login router for all login-related routes
 app.use('/login', loginRouter);

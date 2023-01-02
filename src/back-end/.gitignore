@@ -3,3 +3,6 @@
 
 #environment
 /.env
+
+#logs
+/logs
