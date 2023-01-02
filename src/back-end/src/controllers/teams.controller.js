@@ -20,7 +20,9 @@ const getTeamById = async (req, res, next) => {
         // Call the service function to get the team
         const team = await teamsService.getTeamById(req.tokenData.id, req.params.teamId);
 
-        if (team) {
+        if (team) { 
+            const signedUrl = await team.getSignedUrl();
+            team.image_url = signedUrl
             res.send(team);
         } else {
             // If the team was not found, throw a NotFound error
@@ -28,7 +30,7 @@ const getTeamById = async (req, res, next) => {
         }
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.message : "Cannot trace the error, Please find the log" });
     }
 };
 

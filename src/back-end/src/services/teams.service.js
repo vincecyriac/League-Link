@@ -51,9 +51,6 @@ async function getTeamById(userId, teamId) {
             }
         ]
     });
-    const signedUrl = await team.getSignedUrl();
-    team.image_url = signedUrl
-
     return team;
 }
 
