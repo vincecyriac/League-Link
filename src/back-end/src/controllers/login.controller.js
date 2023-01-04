@@ -7,6 +7,7 @@ const login = async (req, res, next) => {
     // Check if email is provided in request body
     if (!req.body.email) {
         res.status(400).send({ message: "please enter an email" });
+        return
     }
     try {
         // Get user by email
@@ -14,16 +15,21 @@ const login = async (req, res, next) => {
         // Check if user exists
         if (!userResponse) {
             res.status(403).send({ message: "Invalid Credentials" });
+            return
         }
         // Check if password is valid
         const isValidPassword = compareSync(req.body.password, userResponse.password);
         if (!isValidPassword || userResponse.status !== 1) {
             res.status(403).send({ message: "Invalid Credentials" });
+            return
         }
         // Generate and send JWT token
         res.send(authUtils.generateToken(userResponse));
+        return
     } catch (error) {
-        res.status(400).send({ message: "Something went wrong", trace : process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log"});
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -35,11 +41,13 @@ const getCurrentUser = async (req, res, next) => {
         // Check if user exists
         if (!userResponse) {
             res.status(404).send({ message: "Something wrong with logged in user" });
+            return
         }
         res.send(userResponse);
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -51,12 +59,14 @@ const refreshToken = async (req, res, next) => {
         // Check if user exists
         if (!userResponse || userResponse.status !== 1) {
             res.status(404).send({ message: "Something wrong with logged in user" });
+            return
         }
         // Generate and send new JWT token
         res.send(authUtils.generateToken(userResponse));
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 

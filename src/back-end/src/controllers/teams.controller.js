@@ -10,7 +10,8 @@ const getAllTeams = async (req, res, next) => {
         res.send(teamsResponse);
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -30,7 +31,8 @@ const getTeamById = async (req, res, next) => {
         }
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.message : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -49,7 +51,8 @@ const createTeam = async (req, res, next) => {
             res.send({ message: 'Team created', id: team.id });
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -70,8 +73,9 @@ const updateTeam = async (req, res, next) => {
             res.send({ message: "Team updated", id: team});
 
     } catch (error) {
-        // If there is an error, return a bad request response
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 

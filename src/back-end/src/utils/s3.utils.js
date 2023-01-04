@@ -30,9 +30,10 @@ const uploadToS3 = async (req, res, next) => {
 
         // Update the image_url field in the request body with the S3 key of the uploaded file
         req.body.image_url = data.Key;
-    } catch (err) {
-        // If the upload fails, throw a BadRequest error
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 
     // Continue to the next middleware function
@@ -50,9 +51,10 @@ const deleteFromS3 = async (key) => {
         // Perform the upload to S3
         const data = await s3.deleteObject(deleteParams).promise();
         return data
-    } catch (err) {
-        // If the upload fails, throw a BadRequest error
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 
     // Continue to the next middleware function
@@ -69,9 +71,9 @@ const getSignedUrl = async (key) => {
             Expires: parseInt(process.env.PRESIGNED_LINK_EXPIRE),
         })
         return url;
-    } catch (err) {
-        // If there is an error, log it and return null
-        console.error(err);
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
         return null;
     }
 };

@@ -69,6 +69,7 @@ async function createTeam(teamData) {
         // If there is an error, roll back the transaction and delete file form s3 and return error
         await deleteFromS3(teamData.image_url)
         await transaction.rollback();
+        global.logger.error(error.stack)
         return error
     }
 }
@@ -90,6 +91,7 @@ async function updateTeam(teamId, teamData) {
     } catch (error) {
         // If there is an error, roll back the transaction and return error
         await transaction.rollback();
+        global.logger.error(error.stack)
         return error
     }
 }

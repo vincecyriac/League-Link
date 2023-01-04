@@ -59,6 +59,7 @@ async function createPlayers(playersData) {
     } catch (error) {
         // If there is an error, roll back the transaction and return error
         await transaction.rollback();
+        global.logger.error(error.stack)
         return error
     }
 }
@@ -78,6 +79,7 @@ async function updatePlayersTeam(playersData) {
     } catch (error) {
         // If there is an error, roll back the transaction and return error
         await transaction.rollback();
+        global.logger.error(error.stack)
         return error;
     }
 }
@@ -100,6 +102,7 @@ async function updatePlayer(playerId, playerData) {
     } catch (error) {
         // If there is an error, roll back the transaction and return error
         await transaction.rollback();
+        global.logger.error(error.stack)
         return error
     }
 }

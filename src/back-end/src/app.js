@@ -6,8 +6,7 @@ const playersRouter = require('./routes/players.routes');
 const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const logger = require('./utils/logger.utils')
-const uuid = require('uuid');
+const { logger, logAllRequests } = require('./utils/logger.utils')
 
 // Load environment variables from .env file
 dotenv.config();
@@ -18,17 +17,10 @@ const { ORIGIN } = process.env;
 app.use(express.json());
 
 // Enable CORS for all routes
-app.use(cors({
-  origin: ORIGIN,
-}));
-
+app.use(cors());
 
 // Log request details on each API request
-app.use((req, res, next) => {
-  req.id = uuid.v4(); //attach unique id for each request
-  logger.info(`[${req.id}] ${req.method} ${req.path} ${req.ip} ${req.get('user-agent')}`);
-  next()
-});
+app.use(logAllRequests);
 
 // Use the login router for all login-related routes
 app.use('/login', loginRouter);
@@ -43,9 +35,11 @@ app.use('/teams', teamsRouter);
 app.use('/players', playersRouter);
 
 // Catch-all route to handle requests to routes that don't exist
-app.get('*', function(req, res) {
+app.get('*', function (req, res) {
   res.status(400).send({ message: "Path not found" });
 });
+
+global.logger = logger
 
 // Export the app module
 module.exports = app;

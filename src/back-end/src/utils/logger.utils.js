@@ -11,15 +11,25 @@ const fileRotateTransport = new transports.DailyRotateFile({
 });
 
 // Export a logger that logs to the console and to daily rotating log files
-module.exports = createLogger({
+const logger = createLogger({
     format: format.combine(
         // Timestamp with format 'MMM-DD-YYYY HH:mm:ss'
         format.timestamp({ format: 'MMM-DD-YYYY HH:mm:ss' }),
         // Align log messages
         format.align(),
         // Use the log level, timestamp, and message in the log output
-        format.printf(info => `[${info.level}]: ${[info.timestamp]}: ${info.message}`),
+        format.printf(info => `\n[${info.level}] :: ${[info.timestamp]} : ${info.message}`),
     ),
     // Use the console and file rotate transports
-    transports: [new transports.Console(), fileRotateTransport],
+    transports: [fileRotateTransport],
 })
+
+
+function logAllRequests(req, res, next) {
+    res.on('finish', () => {
+        logger.info(`${res.statusCode} ${res.statusMessage} ${req.method} ${req.path} ${req.ip} ${req.get('user-agent')}`);
+      });
+    next();
+  }
+
+module.exports = { logger,logAllRequests }

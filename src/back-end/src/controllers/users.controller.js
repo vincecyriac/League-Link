@@ -18,9 +18,9 @@ const createUser = async (req, res, next) => {
       // Return success response with user ID
       res.send({ message: "User created", id: user.id });
   } catch (error) {
-    console.log(error.stack)
-    // Return error response
-    res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV !== "prod" ? error.stack : "Cannot trace the error, Please find the log" });
+    // return bad request
+    global.logger.error(error.stack)
+    res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
   }
 };
 

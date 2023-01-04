@@ -56,8 +56,9 @@ const isValidRefreshToken = async (req, res, next) => {
         req.tokenData = tokenData;
         next();
     } catch (error) {
-        // If there was an error verifying the token, return an error indicating that the session has expired
-        res.status(400).send({ message: "Something went wrong", trace : process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log"});
+        // return bad request
+        global.logger.error(error)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 

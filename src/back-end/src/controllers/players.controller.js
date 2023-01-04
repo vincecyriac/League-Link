@@ -9,7 +9,8 @@ const getAllPlayers = async (req, res, next) => {
         res.send(players);
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -25,7 +26,8 @@ const getplayerById = async (req, res, next) => {
         }
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -41,7 +43,8 @@ const createPlayers = async (req, res, next) => {
             res.send({ message: 'Players created', pids : players.map(player => {return player.id})});
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -56,7 +59,8 @@ const updatePlayersTeam = async (req, res, next) => {
             res.send({ message: 'Players team updated'});
     } catch (error) {
         // return bad request
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 
@@ -77,8 +81,9 @@ const updatePlayer = async (req, res, next) => {
             res.send({ message: "player updated", id: player});
 
     } catch (error) {
-        // If there is an error, return a bad request response
-        res.status(400).send({ message: "Something went wrong", trace: process.env.APP_ENV != 'prod' ? error.stack : "Cannot trace the error, Please find the log" });
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
 

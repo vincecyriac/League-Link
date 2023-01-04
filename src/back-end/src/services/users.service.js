@@ -29,14 +29,19 @@ const getUserByEmail = async (email) => {
 
 // Function to create a new user
 const createUser = async (userData) => {
+    // Start a transaction
+    const transaction = await sequelize.transaction();
     try {
         // Hash the password before saving the user
         userData.password = hashSync(userData.password, genSaltSync(10));
 
         // Create the user
-        const user = await User.create(userData);
+        const user = await User.create(userData, { transaction });
+        await transaction.commit();
         return user;
     } catch (error) {
+        await transaction.rollback();
+        global.logger.error(error.stack)
         return error
     }
 }
