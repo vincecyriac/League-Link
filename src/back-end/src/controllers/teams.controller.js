@@ -4,7 +4,7 @@ const teamsService = require('../services/teams.service');
 const getAllTeams = async (req, res, next) => {
     try {
         // Call the service function to get all teams for the user
-        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id);
+        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, req.body.limit, req.body.offset);
 
         // Send the response back to the client
         res.send(teamsResponse);

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const { paginate } = require('../middlewares/paginate.middleware')
 
 // Import the middleware for authentication
 const { isAuthenticated } = require('../middlewares/auth.middleware');
@@ -8,7 +9,7 @@ const { isAuthenticated } = require('../middlewares/auth.middleware');
 const playersController = require('../controllers/players.controller');
 
 // GET request to get all players
-router.get('/', isAuthenticated, playersController.getAllPlayers);
+router.get('/', isAuthenticated, paginate, playersController.getAllPlayers);
 
 // GET request to get a player by ID
 router.get('/:playerId', isAuthenticated, playersController.getplayerById);

@@ -3,7 +3,7 @@ const playersService = require('../services/players.service');
 const getAllPlayers = async (req, res, next) => {
     try {
         // Call the service function to get all players for the user
-        const players = await playersService.getAllPlayers(req.tokenData.id);
+        const players = await playersService.getAllPlayers(req.tokenData.id, req.body.limit, req.body.offset);
 
         // Send the response back to the client
         res.send(players);

@@ -3,7 +3,7 @@ const sequelize = require("../config/db.config");
 const { deleteFromS3 } = require("../utils/s3.utils")
 
 // Retrieves all teams that belong to a particular user
-async function getAllTeams(userId) {
+async function getAllTeams(userId, limit, offset) {
     // Find all teams with status 1 and the given user ID
     const teams = await Teams.findAndCountAll({
         where: {
@@ -13,7 +13,9 @@ async function getAllTeams(userId) {
         attributes: ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"],
         order: [
             ['updated_at', 'DESC']
-        ]
+        ],
+        limit,
+        offset
     });
 
     // Modify each team to include a signed URL for their image

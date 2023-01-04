@@ -2,7 +2,7 @@ const { Players, User, Teams } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 
 // Retrieves all teams that belong to a particular user
-async function getAllPlayers(userId) {
+async function getAllPlayers(userId, limit, offset) {
     // Find all teams with status 1 and the given user ID
     const players = await Players.findAndCountAll({
         where: {
@@ -20,7 +20,9 @@ async function getAllPlayers(userId) {
                 attributes: ["name"],
                 required: false
             }
-        ]
+        ],
+        limit,
+        offset
     });
     return players
 }
