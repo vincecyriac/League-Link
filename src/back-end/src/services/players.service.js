@@ -69,6 +69,8 @@ async function createPlayers(playersData) {
 async function updatePlayersTeam(playersData) {
     const transaction = await sequelize.transaction();
     try {
+        //update team_id to null for existing playes
+        await Players.update({ "team_id" : null }, { where: { team_id:  playersData.team_id } })
         // Create the team with the given data and include its players in the transaction
         for (const playerId of playersData.players) {
             const player = await Players.findByPk(playerId)
