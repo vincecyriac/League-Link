@@ -57,7 +57,7 @@ const isValidRefreshToken = async (req, res, next) => {
         next();
     } catch (error) {
         // return bad request
-        global.logger.error(error)
+        global.logger.error(error.stack)
         res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
     }
 };
