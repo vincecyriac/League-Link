@@ -83,6 +83,7 @@ const TournamentTeams = sequelize.define('tournament_teams', {
 const Matches = sequelize.define('matches', {
     id              : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     tournament_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'tournaments', key: 'id' } },
+    match_type_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'match_types', key: 'id' } },
     team1_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
     team2_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
     start_time      : { type: DataTypes.DATE, allowNull: false },
@@ -97,6 +98,20 @@ const Matches = sequelize.define('matches', {
     updatedAt       : 'updated_at',
     freezeTableName : true,
     underscored     : true
+});
+
+//create a sequelize model for match types
+const matchTypes = sequelize.define('match_types', {
+    id              : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
+    type            : { type: DataTypes.STRING(45), allowNull: false },
+    created_at      : { type: DataTypes.DATE, allowNull: false },
+    updated_at      : { type: DataTypes.DATE, allowNull: false }
+}, {
+    tableName: 'match_types',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+    freezeTableName: true,
+    underscored: true
 });
 
 //create a sequelize model for players
@@ -152,7 +167,11 @@ Tournaments.belongsToMany(Teams, { through: 'tournament_teams', foreignKey: 'tou
 //Matches table association
 Matches.belongsTo(Tournaments);
 Matches.belongsTo(Teams)
+Matches.belongsTo(matchTypes)
 Matches.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
+
+//matchTypes table associations
+Scorecard.hasMany(Matches)
 
 //Players table associations
 Players.belongsTo(User)
