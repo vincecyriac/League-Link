@@ -10,12 +10,12 @@ const s3 = new AWS.S3({
 
 // Middleware function to handle file uploads to S3
 const uploadToS3 = async (req, res, next) => {
-    if(process.env.APP_ENV != 'prod'){
-        req.body.image_url = "data.Key";
-        return next();
+    // console.log(req.body)
+    if(!req.file){
+        console.log("No files!! ")
+        next()
+        return
     }
-    if(!req.file)
-        return res.status(400).send({ message: "failed to create team, Please check yout input"});
 
     // Set up the parameters for the S3 upload
     const uploadParams = {
@@ -54,7 +54,7 @@ const deleteFromS3 = async (key) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        return error
     }
 
     // Continue to the next middleware function
@@ -74,7 +74,7 @@ const getSignedUrl = async (key) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        return null;
+        return error;
     }
 };
 

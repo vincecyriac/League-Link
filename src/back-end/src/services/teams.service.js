@@ -83,7 +83,8 @@ async function updateTeam(teamId, teamData) {
         const team = await Teams.findByPk(teamId)
         const imageKey = team.image_url
         await team.update(teamData, { transaction });
-        await deleteFromS3(imageKey)
+        if(teamData.image_url && teamData.image_url != imageKey)
+            await deleteFromS3(imageKey)
         // If there are no errors, commit the transaction
         await transaction.commit();
 
