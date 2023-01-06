@@ -1,0 +1,19 @@
+.login-card{
+  box-shadow: 0 0.75rem 1.5rem rgb(18 38 63 / 10%);
+  border-radius: 5px;
+  border: none;
+  background-color: #fff;
+}
+.login-head{
+  border-radius: 5px 5px 0 0;
+}
+.login-head h5{
+  font-size: 1.2rem;
+}
+.login-head p{
+  margin: 0 !important;
+  font-size: 13px;
+}
+.login-form{
+  padding: 20px;
+}

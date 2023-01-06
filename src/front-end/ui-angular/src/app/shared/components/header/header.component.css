@@ -1,0 +1,30 @@
+.header{
+  position: fixed;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+.header .main-header{
+  background-color: #2a3042;
+  height: 50px;
+  color: #e9ecef;
+}
+.header .menu-header{
+  background-color: #fff;
+  height: 50px;
+  color: #545a6d;
+}
+.menu-items a{
+  color: #545a6d !important;
+  transition: color 0.4s ease-in-out;
+}
+.menu-items a:not(:last-child){
+  margin-right: 50px;
+}
+.menu-items a.link-active{
+  color: #556ee6 !important;
+}
+.menu-items a:hover{
+  color: #556ee6 !important;
+
+}

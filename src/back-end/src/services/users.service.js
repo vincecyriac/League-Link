@@ -1,5 +1,6 @@
 const { User } = require('../models/index.model');
 const { genSaltSync, hashSync } = require("bcrypt");
+const sequelize = require("../config/db.config");
 
 // Function to get a user by their id
 const getUserById = async (userId) => {

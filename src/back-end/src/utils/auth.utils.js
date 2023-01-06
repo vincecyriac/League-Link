@@ -28,8 +28,6 @@ const generateToken = (userData) => {
 
         // Return the user ID, email, access token, and refresh token
         return {
-            userId: userData.id,
-            email: userData.email,
             accessToken: accessToken,
             refreshToken: refreshToken,
         };

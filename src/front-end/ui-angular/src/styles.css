@@ -1,1 +1,74 @@
 /* You can add global styles to this file, and also import other style files */
+@import url(https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700&amp;display=swap);
+
+/* :root {
+  --body-bg: #f3f3f9;
+  --primary-bg-rgb: 85, 110, 230;
+  --primary-bg-soft-rgb : 85, 110, 230, .25;
+  --primary-text-rgb : 85,110,230,1;
+} */
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-color: #f3f3f9 !important;
+  font-family: "Poppins", sans-serif !important;
+}
+
+.primary-bg {
+  background-color: #556ee6 !important;
+}
+
+.primary-bg.bg-soft {
+  background-color: rgba(85, 110, 230, .25) !important;
+}
+
+.primary-text {
+  color: rgba(85, 110, 230, 1) !important;
+}
+
+a {
+  text-decoration: none !important;
+}
+
+.form-group label {
+  font-size: 14px;
+  padding: 0 0 6px 2px;
+}
+
+.form-control {
+  height: 36px;
+  box-shadow: none !important;
+  font-size: 13px !important;
+}
+
+.form-control:focus {
+  border: 1px solid #ced4da !important;
+}
+
+.signupin-msg {
+  font-size: 13px;
+}
+
+.form-group small {
+  color: red;
+  font-size: 13px;
+}
+.form-group .field-desc{
+  font-size: 12px;
+  color: #626262;
+}
+
+/* custom toaster design */
+.toast-success {
+  box-shadow: none !important;
+}
+.toast-success:hover {
+  box-shadow: none !important;
+}
+.min-vh-cus{
+  min-height: calc( 100vh - 60px ) !important;
+}
