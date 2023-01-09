@@ -12,33 +12,39 @@ import { CommonService } from 'src/app/shared/services/common.service';
 })
 export class LoginComponent {
 
-  blnShowSpinner : boolean = false;
+  blnShowSpinner: boolean = false;
 
   constructor(
     private objFormBuilder: FormBuilder,
     private objAuthService: AuthService,
-    private objCommonService : CommonService,
-    private objRouter : Router
+    private objCommonService: CommonService,
+    private objRouter: Router
   ) { }
 
-  // create a FormGroup with email and password form controls,
-  // each with their own set of validators
+  // Create a FormGroup with email and password form controls,
+  // each with their own set of validators.
   objLoginForm = this.objFormBuilder.group({
-    email     : [ '', [Validators.required, Validators.pattern(AppConstants.EMAIL_REGEX)] ],
-    password  : ['', [Validators.required]]
+    email: ['', [Validators.required, Validators.pattern(AppConstants.EMAIL_REGEX)]],
+    password: ['', [Validators.required]]
   });
 
-  // send a POST request to the login endpoint with the form data
-  // if the form is valid
+  // Method to send a POST request to the login endpoint with the form data
+  // if the form is valid.
   loginUser() {
+    // Check if the form is valid.
     if (this.objLoginForm.valid) {
+      // Show the spinner while the request is being processed.
       this.blnShowSpinner = true;
+
+      // Send the login request to the server.
       this.objAuthService.loginUser(this.objLoginForm.value).subscribe({
+        // On success, hide the spinner, show a success message, and redirect to the home page.
         next: () => {
           this.blnShowSpinner = false;
           this.objCommonService.showSuccess('Login Success')
           this.objRouter.navigate(['/'])
         },
+        // On error, hide the spinner and show an error message.
         error: () => {
           this.blnShowSpinner = false;
           this.objCommonService.showError('Invalid Credentials')
@@ -46,6 +52,7 @@ export class LoginComponent {
       });
     }
   }
+
 
 
 }

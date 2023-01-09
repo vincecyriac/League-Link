@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { authInterceptorProviders } from './core/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -24,9 +24,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       timeOut: 2000,
       messageClass : 'custom-toaster'
     }),
-    NgbModule,
   ],
-  providers: [],
+  providers: [
+    authInterceptorProviders
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

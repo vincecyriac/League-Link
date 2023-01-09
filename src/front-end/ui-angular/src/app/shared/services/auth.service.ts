@@ -49,7 +49,7 @@ export class AuthService {
 
   // get the access token from local storage (for use in the auth interceptor)
   getAccessToken(): string | null {
-    return localStorage.getItem(this.JWT_TOKEN);
+    return localStorage.getItem(this.JWT_TOKEN) || null;
   }
 
   // send a PUT request to the login endpoint with the refresh token (for use in the auth interceptor)

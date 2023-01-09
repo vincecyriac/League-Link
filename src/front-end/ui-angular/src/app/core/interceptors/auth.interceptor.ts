@@ -46,7 +46,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   // Add the access token to the request headers
   private addToken(objRequest: HttpRequest<any>, access_token: string | null): HttpRequest<any> {
-    if (objRequest.url.includes('/login') || objRequest.url.includes('/user')) {
+    if (objRequest.method === 'POST' && (objRequest.url.includes('/login') || objRequest.url.includes('/user'))) {
       // Do not add the access token to these specific routes
       return objRequest.clone({ setHeaders: { 'Content-Type': `application/json; charset=utf-8`, } })
     }

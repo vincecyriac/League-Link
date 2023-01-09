@@ -1,30 +1,144 @@
-.header{
+.header {
   position: fixed;
   width: 100%;
   left: 0;
   top: 0;
 }
-.header .main-header{
+
+.header .main-header {
   background-color: #2a3042;
-  height: 50px;
-  color: #e9ecef;
+  height: 70px;
+  color: #e9ecef !important;
 }
-.header .menu-header{
+
+.header .menu-header {
   background-color: #fff;
   height: 50px;
   color: #545a6d;
 }
-.menu-items a{
+
+.menu-items a {
   color: #545a6d !important;
   transition: color 0.4s ease-in-out;
+  font-size: 14px;
 }
-.menu-items a:not(:last-child){
+
+.menu-items a:not(:last-child) {
   margin-right: 50px;
 }
-.menu-items a.link-active{
+
+a.link-active,
+.menu-items a.link-active {
   color: #556ee6 !important;
 }
-.menu-items a:hover{
-  color: #556ee6 !important;
 
+.menu-items a:hover {
+  color: #556ee6 !important;
+}
+
+.head-logo {
+  font-weight: 900;
+  font-size: 30px;
+}
+
+.head-logo a {
+  color: #e9ecef;
+}
+
+.head-logo .logo-cus-size {
+  font-size: 23px;
+}
+
+.head-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.head-menu {
+  position: absolute;
+  right: 80px;
+}
+
+.head-menu .fa-user {
+  margin-right: 0px;
+}
+
+
+.btn-dd {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+}
+
+/* ngb dropdown */
+.dropdown-toggle::after {
+  content: unset !important;
+}
+
+.dropdown-menu {
+  transform: translate3d(8px, 50px, 0px) !important;
+  box-shadow: rgb(18 38 63 / 47%) 0px 0.75rem 1.5rem;
+  transition: display 0.4s ease-in-out;
+  border: none;
+}
+
+.dropdown-menu .dropdown-item {
+  transition: color 0.4s ease-in-out;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 7px;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: unset !important;
+  color: #556ee6 !important;
+}
+
+
+.head-name {
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-divider {
+  border-top: 1px solid #d1d1d1 !important;
+}
+
+.logout-menu{
+  color: #ff7878;
+}
+
+/* ----MEDIA QUERIES------- */
+@media only screen and (max-width: 767px) {
+  .head-menu {
+    position: relative;
+    right: unset;
+  }
+
+  .head-flex {
+    justify-content: space-between;
+  }
+
+  .menu-header {
+    display: none;
+  }
+
+  .head-menu .user-dd-btn {
+    display: none;
+  }
+
+}
+
+@media only screen and (min-width: 768px) {
+  .head-menu .fa-bars {
+    margin-left: 0px;
+  }
+
+  .head-menu .menu-dd-btn {
+    display: none;
+  }
 }
