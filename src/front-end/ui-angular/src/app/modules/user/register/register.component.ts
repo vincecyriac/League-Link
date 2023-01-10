@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AppConstants } from 'src/app/app.constants';
@@ -10,7 +10,8 @@ import { UserService } from 'src/app/shared/services/user.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent {
 
@@ -21,7 +22,8 @@ export class RegisterComponent {
     private objFormBuilder: FormBuilder,
     private objUserService: UserService,
     private objCommonService: CommonService,
-    private objRouter: Router
+    private objRouter: Router,
+    private objChRef : ChangeDetectorRef
   ) { }
 
   // Create a FormGroup with email, name, password, and cPassword (confirm password) form controls,
@@ -65,10 +67,9 @@ export class RegisterComponent {
           this.blnEmailExist = true;
           this.objCommonService.showError('Registration failed')
           this.objRegisterForm.controls['email'].markAsPristine()
+          this.objChRef.markForCheck()
         }
       });
     }
   }
-
-
 }

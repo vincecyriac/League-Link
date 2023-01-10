@@ -4,13 +4,17 @@ import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { SpinnerComponent } from './spinner/spinner.component';
+import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 
 
 
 @NgModule({
   declarations: [
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    SpinnerComponent,
+    ConfirmModalComponent
   ],
   imports: [
     CommonModule,
@@ -19,7 +23,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   ],
   exports: [
     FooterComponent,
-    HeaderComponent
+    HeaderComponent,
+    SpinnerComponent
   ]
 })
 export class ComponentsModule { }

@@ -1,0 +1,121 @@
+<main class="dash-body">
+  <h4>PLAYER MANAGEMENT</h4>
+  <div class="card border-0 mt-4">
+    <div class="card-body">
+      <app-spinner *ngIf="blnShowSpinner"></app-spinner>
+      <div class="d-flex row justify-content-between pb-3">
+        <form class="d-flex col-md-8 align-items-center search-form" [formGroup]="objSearchForm"
+          #objFormSelector="ngForm" (ngSubmit)="searchPlayers()">
+          <input type="text" class="form-control mr-sm-2" formControlName="name" placeholder="Name">
+          <select class="form-control" id="exampleFormControlSelect1" formControlName="team">
+            <option [value]="''">Select team</option>
+            <ng-container *ngFor="let team of arrTeamList">
+              <option [value]="team.id">{{team.name}}</option>
+            </ng-container>
+          </select>
+          <button type="submit" class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Search players"><i
+              class="fa-solid fa-magnifying-glass"></i> </button>
+        </form>
+        <div class="col-md-4 d-flex justify-content-end table-menu">
+          <button class="btn btn-soft-secondary me-2" placement="auto" ngbTooltip="Reload data"
+            (click)="getPlayersList()"> <i class="fa-solid fa-rotate-right"></i></button>
+          <button class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Add new players"
+            (click)="openModal(2)"> <i class="fa-solid fa-plus"></i></button>
+          <button class="btn btn-soft-danger" placement="auto" ngbTooltip="Delete players"
+            (click)="openModal(1)"> <i
+              class="fa-solid fa-trash"></i></button>
+        </div>
+      </div>
+      <ng-container *ngIf="objPlayersData?.rows.length < 1">
+        <div class="text-center m-5">No players found!</div>
+      </ng-container>
+      <ng-container *ngIf="objPlayersData?.rows.length > 0">
+        <div class="mod-table-container">
+          <div class="mod-table">
+            <div class="mod-table-row mod-table-head">
+              <div class="mod-table-cell">
+                <label class="checkbox">
+                  <input type="checkbox" (click)="handleSelectAll($event)" [checked]="blnAllSelected"/>
+                  <svg viewBox="0 0 21 18">
+                    <symbol id="tick-path-main" viewBox="0 0 21 18" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5.22003 7.26C5.72003 7.76 7.57 9.7 8.67 11.45C12.2 6.05 15.65 3.5 19.19 1.69"
+                        fill="none" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+                    </symbol>
+                    <defs>
+                      <mask id="tick-main">
+                        <use class="tick mask" href="#tick-path-main" />
+                      </mask>
+                    </defs>
+                    <use class="tick" href="#tick-path-main" stroke="currentColor" />
+                    <path fill="white" mask="url(#tick-main)"
+                      d="M18 9C18 10.4464 17.9036 11.8929 17.7589 13.1464C17.5179 15.6054 15.6054 17.5179 13.1625 17.7589C11.8929 17.9036 10.4464 18 9 18C7.55357 18 6.10714 17.9036 4.85357 17.7589C2.39464 17.5179 0.498214 15.6054 0.241071 13.1464C0.0964286 11.8929 0 10.4464 0 9C0 7.55357 0.0964286 6.10714 0.241071 4.8375C0.498214 2.39464 2.39464 0.482143 4.85357 0.241071C6.10714 0.0964286 7.55357 0 9 0C10.4464 0 11.8929 0.0964286 13.1625 0.241071C15.6054 0.482143 17.5179 2.39464 17.7589 4.8375C17.9036 6.10714 18 7.55357 18 9Z" />
+                  </svg>
+                  <svg class="lines" viewBox="0 0 11 11">
+                    <path d="M5.88086 5.89441L9.53504 4.26746" />
+                    <path d="M5.5274 8.78838L9.45391 9.55161" />
+                    <path d="M3.49371 4.22065L5.55387 0.79198" />
+                  </svg>
+                </label>
+              </div>
+              <div class="mod-table-cell">#</div>
+              <div class="mod-table-cell">Name</div>
+              <div class="mod-table-cell">phone</div>
+              <div class="mod-table-cell">Team</div>
+              <div class="mod-table-cell">Created date</div>
+              <div class="mod-table-cell">Updated date</div>
+              <div class="mod-table-cell">Action</div>
+            </div>
+            <ng-container *ngFor="let player of objPlayersData?.rows; let index = index">
+              <div class="mod-table-row mod-table-data">
+                <div class="mod-table-cell">
+                  <label class="checkbox">
+                    <input type="checkbox" #selectionCheckbox (click)="handleSingleSelection($event, player.id)" />
+                    <svg viewBox="0 0 21 18">
+                      <symbol [id]="'tick-path-'+player.id" viewBox="0 0 21 18" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.22003 7.26C5.72003 7.76 7.57 9.7 8.67 11.45C12.2 6.05 15.65 3.5 19.19 1.69"
+                          fill="none" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
+                      </symbol>
+                      <defs>
+                        <mask [id]="'tick-'+player.id">
+                          <use class="tick mask" [attr.href]="'#tick-path-'+player.id" />
+                        </mask>
+                      </defs>
+                      <use class="tick" [attr.href]="'#tick-path-'+player.id" stroke="currentColor" />
+                      <path fill="white" [attr.mask]="'url(#tick-'+player.id+')'"
+                        d="M18 9C18 10.4464 17.9036 11.8929 17.7589 13.1464C17.5179 15.6054 15.6054 17.5179 13.1625 17.7589C11.8929 17.9036 10.4464 18 9 18C7.55357 18 6.10714 17.9036 4.85357 17.7589C2.39464 17.5179 0.498214 15.6054 0.241071 13.1464C0.0964286 11.8929 0 10.4464 0 9C0 7.55357 0.0964286 6.10714 0.241071 4.8375C0.498214 2.39464 2.39464 0.482143 4.85357 0.241071C6.10714 0.0964286 7.55357 0 9 0C10.4464 0 11.8929 0.0964286 13.1625 0.241071C15.6054 0.482143 17.5179 2.39464 17.7589 4.8375C17.9036 6.10714 18 7.55357 18 9Z" />
+                    </svg>
+                    <svg class="lines" viewBox="0 0 11 11">
+                      <path d="M5.88086 5.89441L9.53504 4.26746" />
+                      <path d="M5.5274 8.78838L9.45391 9.55161" />
+                      <path d="M3.49371 4.22065L5.55387 0.79198" />
+                    </svg>
+                  </label>
+                </div>
+                <div class="mod-table-cell">{{player?.id}}</div>
+                <div class="mod-table-cell">{{player.name}} </div>
+                <div class="mod-table-cell">{{player.phone}}</div>
+                <div class="mod-table-cell">{{player?.team?.name || 'Not available'}}</div>
+                <div class="mod-table-cell">{{player.created_at | date}}</div>
+                <div class="mod-table-cell">{{player.updated_at | date}}</div>
+                <div class="mod-table-cell">
+                  <button class="btn btn-sm btn-soft-primary" placement="auto" ngbTooltip="View player details">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <div class="mt-4 mod-pagination">
+            <ngb-pagination [collectionSize]="objPlayersData?.count" [page]="objPaginationData.currentPage"
+              [pageSize]="objPaginationData?.pageSize" [directionLinks]="objPaginationData?.directionLinks"
+              [maxSize]="objPaginationData?.maxSize" [size]="objPaginationData?.size"
+              (pageChange)="handlePageChange($event)">
+            </ngb-pagination>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</main>

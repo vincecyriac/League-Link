@@ -1,26 +1,37 @@
 const { Players, User, Teams } = require("../models/index.model");
 const sequelize = require("../config/db.config");
+const { Op } = require('sequelize');
 
 // Retrieves all teams that belong to a particular user
-async function getAllPlayers(userId, limit, offset) {
-    // Find all teams with status 1 and the given user ID
+async function getAllPlayers(userId, limit, offset, params, fields) {
+    console.log(params)
+    const whereClause = {
+        status: 1,
+        user_id: userId,
+        name: {
+            [Op.like]: `%${params.name || ''}%`
+        }
+    };
+
+    if (params.team) {
+        whereClause.team_id = params.team;
+    }
+    // Find all teams with status 1 and the given user ID and search params
     const players = await Players.findAndCountAll({
-        where: {
-            status: 1,
-            user_id: userId
-        },
-        attributes: ["id", "user_id", "team_id", "name", "phone", "status", "created_at", "updated_at"],
+        where: whereClause,
+        attributes: fields,
         order: [
-            ['updated_at', 'DESC']
+            ['updated_at', 'DESC'],
+            ['id', 'ASC']
         ],
-        include: [
+        include: fields.includes('team_id') ? [
             {
                 model: Teams,
                 as: "team",
                 attributes: ["name"],
-                required: false
+                required: false,
             }
-        ],
+        ] : null,
         limit,
         offset
     });
@@ -52,12 +63,12 @@ async function getPlayerById(userId, playerId) {
 async function createPlayers(playersData) {
     const transaction = await sequelize.transaction();
     try {
-        // Create the team with the given data and include its players in the transaction
-        const team = await Players.bulkCreate(playersData, { transaction });
+        // Create the player with the given data and include its players in the transaction
+        const player = await Players.bulkCreate(playersData, { transaction });
 
-        // If the team is successfully created, commit the transaction
+        // If the player is successfully created, commit the transaction
         await transaction.commit();
-        return team;
+        return player;
     } catch (error) {
         // If there is an error, roll back the transaction and return error
         await transaction.rollback();
@@ -70,14 +81,14 @@ async function updatePlayersTeam(playersData) {
     const transaction = await sequelize.transaction();
     try {
         //update team_id to null for existing playes
-        await Players.update({ "team_id" : null }, { where: { team_id:  playersData.team_id } })
-        // Create the team with the given data and include its players in the transaction
+        await Players.update({ "team_id": null }, { where: { team_id: playersData.team_id } })
+        // Create the player with the given data in the transaction
         for (const playerId of playersData.players) {
             const player = await Players.findByPk(playerId)
-            await player.update({ team_id: playersData.team_id },{ transaction });
+            await player.update({ team_id: playersData.team_id }, { transaction });
         }
 
-        // If the team is successfully created, commit the transaction
+        // If the player is successfully created, commit the transaction
         await transaction.commit();
         return
     } catch (error) {
@@ -88,10 +99,34 @@ async function updatePlayersTeam(playersData) {
     }
 }
 
+async function deletePlayers(playersData) {
+    const transaction = await sequelize.transaction();
+    try {
+
+        // soft delete the players with the given ids 
+        for (const playerId of playersData.ids) {
+            const player = await Players.findByPk(playerId)
+            if(player.status == 0)
+                throw new Error()
+            await player.update({ status: 0 }, { transaction });
+        }
+
+        // If the player is successfully deleted, commit the transaction
+        await transaction.commit();
+        return
+    } catch (error) {
+        // If there is an error, roll back the transaction and return error
+        await transaction.rollback();
+        global.logger.error(error.stack)
+        return error;
+    }
+}
+
+
 async function updatePlayer(playerId, playerData) {
     // Start a transaction
     const transaction = await sequelize.transaction();
-    
+
     try {
         // Update the player with the new data
         await Players.update(playerData, {
@@ -111,4 +146,4 @@ async function updatePlayer(playerId, playerData) {
     }
 }
 
-module.exports = { getAllPlayers, getPlayerById, createPlayers, updatePlayersTeam, updatePlayer }
+module.exports = { getAllPlayers, getPlayerById, createPlayers, updatePlayersTeam, updatePlayer, deletePlayers }

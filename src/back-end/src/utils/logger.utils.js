@@ -26,7 +26,6 @@ const logger = createLogger({
 
 
 function logAllRequests(req, res, next) {
-  console.log(req)
     res.on('finish', () => {
         logger.info(`${res.statusCode} ${res.statusMessage} ${req.method} ${req.originalUrl} ${req.ip} ${req.get('user-agent')}`);
       });

@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
+  styleUrls: ['./header.component.css'],
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {
 
@@ -13,7 +14,8 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     private objAuthService: AuthService,
-    private objUserService: UserService
+    private objUserService: UserService,
+    private objChRef : ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -31,7 +33,8 @@ export class HeaderComponent implements OnInit {
     this.objUserService.getCurrentUser().subscribe({
       // On success, set the userName to the first name of the current user.
       next: (objResponse) => {
-        this.strUserName = objResponse.name.split(' ')[0]
+        this.strUserName = objResponse.name.split(' ')[0],
+        this.objChRef.markForCheck()
       }
     });
   }

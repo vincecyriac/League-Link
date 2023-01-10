@@ -3,14 +3,14 @@ const sequelize = require("../config/db.config");
 const { deleteFromS3 } = require("../utils/s3.utils")
 
 // Retrieves all teams that belong to a particular user
-async function getAllTeams(userId, limit, offset) {
+async function getAllTeams(userId, limit, offset, fields) {
     // Find all teams with status 1 and the given user ID
     const teams = await Teams.findAndCountAll({
         where: {
             status: 1,
             user_id: userId
         },
-        attributes: ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"],
+        attributes: fields,
         order: [
             ['updated_at', 'DESC']
         ],
@@ -18,17 +18,21 @@ async function getAllTeams(userId, limit, offset) {
         offset
     });
 
-    // Modify each team to include a signed URL for their image
-    const modifiedTeams = teams.rows.map(async team => {
-        const signedUrl = await team.getSignedUrl();
-        return { ...team.dataValues, image_url: signedUrl };
-    });
+    if(fields.includes("image'_url")){
+        // Modify each team to include a signed URL for their image
+        const modifiedTeams = teams.rows.map(async team => {
+            const signedUrl = await team.getSignedUrl();
+            return { ...team.dataValues, image_url: signedUrl };
+        });
+    
+        // Wait for all modified teams to be processed and return the response
+        teams.rows = await Promise.all(modifiedTeams);
+    }
 
-    // Wait for all modified teams to be processed and return the response
-    teams.rows = await Promise.all(modifiedTeams);
     return teams;
 
 }
+
 
 // Retrieves a team by ID, along with its players
 async function getTeamById(userId, teamId) {

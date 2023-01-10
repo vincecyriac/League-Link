@@ -20,6 +20,9 @@ const upload = multer();
 // GET request to get all teams
 router.get('/', isAuthenticated, paginate, teamsController.getAllTeams);
 
+// GET request to get all teams with name and id only
+router.get('/mini', isAuthenticated, teamsController.getAllTeamsMiniList);
+
 // GET request to get a team by ID
 router.get('/:teamId', isAuthenticated, teamsController.getTeamById);
 

@@ -54,7 +54,7 @@ export class AuthService {
 
   // send a PUT request to the login endpoint with the refresh token (for use in the auth interceptor)
   refreshLogin(): Observable<any> {
-    return this.objHttpClient.put(this.API_ENDPOINT + 'login', localStorage.getItem(this.REFRESH_TOKEN));
+    return this.objHttpClient.put(this.API_ENDPOINT + 'login', { refreshToken : localStorage.getItem(this.REFRESH_TOKEN)});
   }
 
   // save the new access and refresh tokens in local storage (for use in the auth interceptor)

@@ -10,9 +10,7 @@ const s3 = new AWS.S3({
 
 // Middleware function to handle file uploads to S3
 const uploadToS3 = async (req, res, next) => {
-    // console.log(req.body)
     if(!req.file){
-        console.log("No files!! ")
         next()
         return
     }

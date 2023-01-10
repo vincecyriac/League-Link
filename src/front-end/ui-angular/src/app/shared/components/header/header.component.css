@@ -3,6 +3,7 @@
   width: 100%;
   left: 0;
   top: 0;
+  z-index: 999;
 }
 
 .header .main-header {
@@ -78,7 +79,7 @@ a.link-active,
 }
 
 .dropdown-menu {
-  transform: translate3d(8px, 50px, 0px) !important;
+  transform: translate3d(8px, 25px, 0px) !important;
   box-shadow: rgb(18 38 63 / 47%) 0px 0.75rem 1.5rem;
   transition: display 0.4s ease-in-out;
   border: none;

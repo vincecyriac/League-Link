@@ -3,7 +3,23 @@ const playersService = require('../services/players.service');
 const getAllPlayers = async (req, res, next) => {
     try {
         // Call the service function to get all players for the user
-        const players = await playersService.getAllPlayers(req.tokenData.id, req.body.limit, req.body.offset);
+        const requiredFields = ["id", "user_id", "team_id", "name", "phone", "status", "created_at", "updated_at"];
+        const players = await playersService.getAllPlayers(req.tokenData.id, req.body.limit, req.body.offset, req.query, requiredFields);
+
+        // Send the response back to the client
+        res.send(players);
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+    }
+};
+
+const getAllPlayersMiniList = async (req, res, next) => {
+    try {
+        // Call the service function to get all players for the user
+        const requiredFields = ["id", "name"];
+        const players = await playersService.getAllPlayers(req.tokenData.id, null, null, req.query, requiredFields);
 
         // Send the response back to the client
         res.send(players);
@@ -64,6 +80,22 @@ const updatePlayersTeam = async (req, res, next) => {
     }
 };
 
+const deletePlayers = async (req, res, next) => {
+    try {
+        // Call the service function to update players
+        const players = await playersService.deletePlayers(req.body);
+        if (players instanceof Error)
+            return res.status(400).send({ message: "Failed to delete players, Please check yout input"});
+        else
+            // Send a response back to the client
+            res.send({ message: 'Players deleted'});
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+    }
+};
+
 const updatePlayer = async (req, res, next) => {
     try {
         // Call the service function to update the player
@@ -87,4 +119,4 @@ const updatePlayer = async (req, res, next) => {
     }
 };
 
-module.exports = { getAllPlayers, getplayerById, createPlayers, updatePlayersTeam, updatePlayer }
+module.exports = { getAllPlayers, getplayerById, createPlayers, updatePlayersTeam, updatePlayer, getAllPlayersMiniList, deletePlayers }

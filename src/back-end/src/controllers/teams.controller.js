@@ -3,8 +3,25 @@ const teamsService = require('../services/teams.service');
 // Get all teams for a user
 const getAllTeams = async (req, res, next) => {
     try {
+        const requiredFields = ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"]
         // Call the service function to get all teams for the user
-        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, req.body.limit, req.body.offset);
+        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, req.body.limit, req.body.offset, requiredFields);
+
+        // Send the response back to the client
+        res.send(teamsResponse);
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+    }
+};
+
+// Get all teams for a user
+const getAllTeamsMiniList = async (req, res, next) => {
+    try {
+        const requiredFields = ["id", "name"]
+        // Call the service function to get all teams for the user
+        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, null, null, requiredFields);
 
         // Send the response back to the client
         res.send(teamsResponse);
@@ -79,4 +96,4 @@ const updateTeam = async (req, res, next) => {
     }
 };
 
-module.exports = { getAllTeams, getTeamById, createTeam, updateTeam };
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam, getAllTeamsMiniList };

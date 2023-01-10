@@ -5,7 +5,7 @@
         <a href="">LEAGUE <i class="fa-solid fa-medal logo-cus-size"></i> LINK</a>
       </div>
       <div class="head-menu d-flex">
-        <div ngbDropdown [placement] = "'bottom-end'" class="user-dd-btn">
+        <div ngbDropdown [placement] = "'bottom-end'" [container]="'body'" class="user-dd-btn">
           <button type="button" class="btn-dd d-flex align-items-center" id="dropdown1" ngbDropdownToggle>
             <div class="me-2 head-name">{{strUserName}}</div>
             <i class="fa-solid fa-user"></i>
@@ -15,14 +15,14 @@
             <a ngbDropdownItem (click)="logout()" class="logout-menu"><i class="fa-solid fa-power-off me-2"></i>log out</a>
           </div>
         </div>
-        <div ngbDropdown [placement] = "'bottom-end'" class="menu-dd-btn me-2">
+        <div ngbDropdown [placement] = "'bottom-end'" [container]="'body'" class="menu-dd-btn me-2">
           <button type="button" class="btn-dd" id="dropdown2" ngbDropdownToggle>
             <i class="fa-solid fa-bars"></i>
           </button>
           <div ngbDropdownMenu aria-labelledby="dropdown2">
-            <a ngbDropdownItem [routerLink]="['/']" routerLinkActive="link-active"><i class="fa-solid fa-ranking-star me-2"></i>Tournaments</a>
-            <a ngbDropdownItem [routerLink]="['/']" routerLinkActive="link-active"><i class="fa-solid fa-users-gear me-2"></i>Teams</a>
-            <a ngbDropdownItem [routerLink]="['/']" routerLinkActive="link-active"><i class="fa-solid fa-person-shelter me-2"></i>Players</a>
+            <a ngbDropdownItem [routerLink]="['/tournaments']" routerLinkActive="link-active"><i class="fa-solid fa-ranking-star me-2"></i>Tournaments</a>
+            <a ngbDropdownItem [routerLink]="['/teams']" routerLinkActive="link-active"><i class="fa-solid fa-users-gear me-2"></i>Teams</a>
+            <a ngbDropdownItem [routerLink]="['/players']" routerLinkActive="link-active"><i class="fa-solid fa-person-shelter me-2"></i>Players</a>
             <hr class="m-1 menu-divider">
             <a ngbDropdownItem [routerLink]="['/']" routerLinkActive="link-active"><i class="fa-solid fa-gear me-2"></i>Profile</a>
             <a ngbDropdownItem (click)="logout()" class="logout-menu"><i class="fa-solid fa-power-off me-2"></i> log out</a>
@@ -34,9 +34,9 @@
   <div class="menu-header">
     <div class="container h-100 d-flex align-items-center">
       <div class="menu-items">
-        <a [routerLink]="['/']" routerLinkActive="link-active" class="link-active"><i class="fa-solid fa-ranking-star me-2"></i>Tournaments</a>
-        <a [routerLink]="['/login']" routerLinkActive="link-active"><i class="fa-solid fa-users-gear me-2"></i>Teams</a>
-        <a [routerLink]="['/signup']" routerLinkActive="link-active"><i class="fa-solid fa-person-shelter me-2"></i>players</a>
+        <a [routerLink]="['/tournaments']" routerLinkActive="link-active"><i class="fa-solid fa-ranking-star me-2"></i>Tournaments</a>
+        <a [routerLink]="['/teams']" routerLinkActive="link-active"><i class="fa-solid fa-users-gear me-2"></i>Teams</a>
+        <a [routerLink]="['/players']" routerLinkActive="link-active"><i class="fa-solid fa-person-shelter me-2"></i>players</a>
       </div>
     </div>
   </div>

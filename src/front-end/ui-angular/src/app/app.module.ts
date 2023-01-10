@@ -7,6 +7,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { authInterceptorProviders } from './core/interceptors/auth.interceptor';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { authInterceptorProviders } from './core/interceptors/auth.interceptor';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    NgbModule,
     ToastrModule.forRoot({
       positionClass: 'toast-bottom-center',
       preventDuplicates: true,

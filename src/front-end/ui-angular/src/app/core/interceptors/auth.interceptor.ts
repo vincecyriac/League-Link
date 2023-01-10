@@ -11,6 +11,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { catchError, filter, finalize, switchMap, take } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/services/auth.service';
+import { CommonService } from 'src/app/shared/services/common.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -23,6 +24,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     // Inject the authentication service
     private objAuthService: AuthService,
+    private objCommonService : CommonService
   ) { }
 
   intercept(objRequest: HttpRequest<any>, objNext: HttpHandler): Observable<HttpEvent<any>> {
@@ -76,19 +78,20 @@ export class AuthInterceptor implements HttpInterceptor {
           // Set the flag to indicate that the access token is no longer being refreshed.
           this.blnIsRefreshing = false;
           // Save the new access and refresh tokens.
-          this.objAuthService.saveNewToken(objToken.accessToken['value'], objToken.refreshToken['value']);
+          this.objAuthService.saveNewToken(objToken.accessToken, objToken.refreshToken);
           // Send the new access token to all subscribers of the refreshTokenSubject$.
-          this.refreshTokenSubject$.next(objToken.accessToken['value']);
+          this.refreshTokenSubject$.next(objToken.accessToken);
           // Return an Observable that sends the HTTP request with the new access token to the server.
           return objNext.handle(
-            this.addToken(objRequest, objToken.accessToken['value'])
+            this.addToken(objRequest, objToken.accessToken)
           );
         }),
         // If an error occurs during the refresh process, catch the error and log the user out.
         catchError((objError: any) => {
           // Set the flag to indicate that the access token is no longer being refreshed.
           this.blnIsRefreshing = false;
-          // Log the user out.
+          // Log the user out and show session expired warning
+          this.objCommonService.showWarning('Session expired')
           this.objAuthService.logOut();
           // Throw the error.
           return throwError(objError)
