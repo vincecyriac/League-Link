@@ -1,0 +1,10 @@
+.cus-modal{
+  min-height: 200px;
+  padding: 20px;
+}
+.btn{
+  width: 110px !important;
+}
+.cus-modal .fa-circle-question{
+  font-size: 40px;
+}

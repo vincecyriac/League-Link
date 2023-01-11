@@ -1,1 +1,56 @@
-<p>create works!</p>
+<div class="create-modal p-3 pb-">
+  <form [formGroup]="objUserCreateForm" #objFormSelector="ngForm" (ngSubmit)="createUsers()">
+  <div class="row mt-3 mb-3">
+    <div class="col-12 text-center">
+      <h4>
+        Add new players
+      </h4>
+    </div>
+  </div>
+  <div class="modal-body pb-0 pt-0">
+      <ng-container formArrayName="players" *ngFor="let disc of objUserCreateForm.controls['players'].controls; let playerIndex = index">
+        <ng-container [formGroupName]="playerIndex">
+          <div class="mb-3">
+            <div class="form-array-head pe-1 ps-1">
+              <span>Player {{playerIndex + 1}}</span>
+              <button type="button" class="btn btn-sm btn-soft-danger" (click)="deletePlayer(playerIndex)" placement="auto" ngbTooltip="Delete player {{playerIndex + 1}}" [disabled]="objUserCreateForm.controls['players'].controls.length <= 1"> <i class="fa-solid fa-trash"></i></button>
+            </div>
+            <div class="row form-array-content">
+              <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+                <label class="required">Name</label>
+                <input type="text" class="form-control" placeholder="Name" formControlName="name">
+                <small *ngIf="objUserCreateForm.controls['players'].controls[playerIndex].controls['name'].invalid && (objFormSelector.submitted || objUserCreateForm.controls['players'].controls[playerIndex].controls['name'].touched)">Invalid name</small>
+              </div>
+              <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+                <label class="required">Phone</label>
+                <input type="text" class="form-control" placeholder="Phone" formControlName="phone">
+                <small *ngIf="objUserCreateForm.controls['players'].controls[playerIndex].controls['phone'].invalid && (objFormSelector.submitted || objUserCreateForm.controls['players'].controls[playerIndex].controls['phone'].touched)">Invalid phone</small>
+              </div>
+              <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+                <label>Team</label>
+                <select class="form-control" id="exampleFormControlSelect1" formControlName="team_id">
+                  <option [value]="null">Select team</option>
+                  <ng-container *ngFor="let team of arrTeamsList">
+                    <option [value]="team.id">{{team.name}}</option>
+                  </ng-container>
+                </select>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+      <div class="row">
+        <button class="btn w-auto btn-sm btn-soft-primary" type="button" (click)="addPlayer()"><i class="fa-solid fa-user-plus"></i> Add player</button>
+      </div>
+    </div>
+    <div class="row modal-foot m-4">
+      <div class="col-12 text-center">
+        <button class="btn btn-soft-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
+        <button class="btn btn-soft-primary" type="submit" [disabled]="blnShowSpinner">
+          <i *ngIf="blnShowSpinner" class="fa-solid fa-spinner fa-spin"></i>
+          <span *ngIf="!blnShowSpinner">Register</span>
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

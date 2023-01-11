@@ -177,7 +177,8 @@ a {
   box-shadow: none;
 }
 
-.mod-pagination .page-item.active .page-link {
+.mod-pagination .page-item.active .page-link,
+.mod-pagination .page-item .page-link:hover {
   color: #fff !important;
   background-color: rgba(85, 110, 230, 1) !important;
 }

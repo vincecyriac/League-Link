@@ -22,7 +22,7 @@
           <button class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Add new players"
             (click)="openModal(2)"> <i class="fa-solid fa-plus"></i></button>
           <button class="btn btn-soft-danger" placement="auto" ngbTooltip="Delete players"
-            (click)="openModal(1)"> <i
+            (click)="openModal(1)" [disabled]="arrSelectedList.length == 0"> <i
               class="fa-solid fa-trash"></i></button>
         </div>
       </div>

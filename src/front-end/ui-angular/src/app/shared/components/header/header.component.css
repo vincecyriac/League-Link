@@ -131,6 +131,10 @@ a.link-active,
   .head-menu .user-dd-btn {
     display: none;
   }
+  .dropdown:not(.menu-dd-btn){
+    width: calc( 100% - 1rem ) !important;
+    transform: translate3d(-16px, 49px, 0px) !important;
+  }
 
 }
 

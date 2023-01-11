@@ -18,4 +18,14 @@ export class PlayersService {
   public getAllPlayers(intPage: number, objPayload : any): Observable<any> {
     return this.objHttpClient.get(`${this.API_ENDPOINT}players?limit=${AppConstants.PAGINATION_PAGE_SIZE}&page=${intPage}&name=${objPayload?.name}&team=${objPayload?.team}`)
   }
+
+  //function to delete players
+  public deletPlayers(objPayload : any): Observable<any> {
+    return this.objHttpClient.put(`${this.API_ENDPOINT}players/delete`,objPayload)
+  }
+
+  //function to create players
+  public createPlayers(objPayload : any): Observable<any> {
+    return this.objHttpClient.post(`${this.API_ENDPOINT}players`,objPayload)
+  }
 }

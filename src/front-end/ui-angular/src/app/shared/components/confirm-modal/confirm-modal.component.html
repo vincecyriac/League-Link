@@ -1,4 +1,14 @@
-Are you sure you want tp proceed?
-<button (click)="openCloseModal(1)">confirm</button>
-
-<button (click)="openCloseModal(2)">close</button>
+<div class="cus-modal d-flex justify-content-center align-items-center">
+  <div class="row text-center">
+    <div class="col-12 mt-2">
+      <i class="fa-regular fa-circle-question"></i>
+    </div>
+    <div class="col-12 mt-4">
+      {{strMessage}}
+    </div>
+    <div class="col-12 mt-4">
+      <button class="btn btn-soft-secondary me-2" (click)="openCloseModal(2)">close</button>
+      <button class="btn" [ngClass]="strClass || 'btn-soft-primary'" (click)="openCloseModal(1)">confirm</button>
+    </div>
+  </div>
+</div>

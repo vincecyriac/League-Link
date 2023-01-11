@@ -1,0 +1,24 @@
+.modal-body{
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.modal-foot .btn{
+  width: 110px !important;
+}
+.form-array-head{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  align-items: center;
+}
+.modal-body label{
+  font-size: 14px;
+}
+.modal-body label.required::after{
+  content: '*';
+  color: #FF0000;
+}
+.form-array-content{
+  padding: 10px;
+  border: 1px solid #f3f3f3;
+}

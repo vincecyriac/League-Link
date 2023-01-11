@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, Subject, take, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -51,12 +51,13 @@ export class IndexComponent implements OnInit, OnDestroy {
     private objTeamsService: TeamsService,
     private objChRef: ChangeDetectorRef,
     private objModalService: NgbModal,
+    private objActivatedRoute: ActivatedRoute,
     private objRouter: Router
   ) { }
 
   ngOnInit(): void {
-    this.getPlayersList();
     this.getTeamsList();
+    this.getPlayersList();
   }
 
   ngOnDestroy() {
@@ -119,16 +120,23 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.objPaginationData.currentPage = intPage;
     // call getPlayersList function to load the new page
     this.getPlayersList();
+    //reset select variables
+    this.blnAllSelected = false;
+    this.arrSelectedList = []
   }
 
-  openModal(intModalId: number, intPlayerId?: number) {
+  openModal(intModalId: number) {
     // Open the modal with specified id, with size 'lg' and centered
     const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: 'lg', centered: true });
     // If the modal is of type 1, set the player id on the modal instance
     if (intModalId === 1) {
-      modalRef.componentInstance.intPlayerId = intPlayerId;
+      modalRef.componentInstance.strMessage = "Are you sure you want to delete the selected players?";
+      modalRef.componentInstance.strClass = 'btn-soft-danger';
+    } else {
+      modalRef.componentInstance.arrTeamsList = this.arrTeamList;
     }
     modalRef.result.then((result) => {
+      console.log(result)
       // On modal close, check the returned result
       // if result is 1, call deletePlayers function
       // otherwise, call getPlayersList function
@@ -168,7 +176,23 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   deletePlayers() {
-    console.log(this.arrSelectedList)
+    this.blnShowSpinner = true
+    if (this.arrSelectedList.length > 0)
+      this.objPlayersService.deletPlayers({ ids: this.arrSelectedList }).pipe(takeUntil(this.objDestroyed$)).subscribe({
+        next: () => {
+          this.objCommonService.showSuccess('Deleted succesfully')
+          if (this.objPaginationData.currentPage != 1 && this.objPaginationData.currentPage == Math.ceil(this.objPlayersData.count / this.objPaginationData.pageSize) && this.arrSelectedList.length == this.objPlayersData.rows.length) {
+            this.objPaginationData.currentPage -= 1
+          }
+          this.blnAllSelected = false;
+          this.arrSelectedList = []
+          this.getPlayersList();
+        },
+        error: () => {
+          this.blnShowSpinner = false;
+          this.objCommonService.showError('Delete operation failed')
+        }
+      })
   }
 
 }

@@ -24,7 +24,7 @@ router.post('/', isAuthenticated, playersController.createPlayers);
 router.put('/team', isAuthenticated, playersController.updatePlayersTeam);
 
 // PUT request to update team of multiple players
-router.delete('/', isAuthenticated, playersController.deletePlayers);
+router.put('/delete', isAuthenticated, playersController.deletePlayers);
 
 // PUT request to update individual player data
 router.put('/:playerId', isAuthenticated, playersController.updatePlayer);
