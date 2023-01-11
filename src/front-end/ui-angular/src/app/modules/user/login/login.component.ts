@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { AuthService } from 'src/app/shared/services/auth.service';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -10,7 +11,9 @@ import { CommonService } from 'src/app/shared/services/common.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
+
+  private objDestroyed$ = new Subject();
 
   blnShowSpinner: boolean = false;
 
@@ -20,6 +23,11 @@ export class LoginComponent {
     private objCommonService: CommonService,
     private objRouter: Router
   ) { }
+
+  ngOnDestroy() {
+    this.objDestroyed$.next(void 0);
+    this.objDestroyed$.complete();
+  }
 
   // Create a FormGroup with email and password form controls,
   // each with their own set of validators.
@@ -37,17 +45,17 @@ export class LoginComponent {
       this.blnShowSpinner = true;
 
       // Send the login request to the server.
-      this.objAuthService.loginUser(this.objLoginForm.value).subscribe({
+      this.objAuthService.loginUser(this.objLoginForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
         // On success, hide the spinner, show a success message, and redirect to the home page.
         next: () => {
           this.blnShowSpinner = false;
-          this.objCommonService.showSuccess('Login Success')
-          this.objRouter.navigate(['/'])
+          this.objCommonService.showSuccess('Login Success');
+          this.objRouter.navigate(['/']);
         },
         // On error, hide the spinner and show an error message.
         error: () => {
           this.blnShowSpinner = false;
-          this.objCommonService.showError('Invalid Credentials')
+          this.objCommonService.showError('Invalid Credentials');
         }
       });
     }

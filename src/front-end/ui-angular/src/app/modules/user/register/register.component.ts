@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { passwordMatchValidator } from 'src/app/shared/functions/common.validators';
 import { AuthService } from 'src/app/shared/services/auth.service';
@@ -13,7 +14,9 @@ import { UserService } from 'src/app/shared/services/user.service';
   styleUrls: ['./register.component.css'],
   changeDetection : ChangeDetectionStrategy.OnPush
 })
-export class RegisterComponent {
+export class RegisterComponent  implements OnDestroy {
+
+  private objDestroyed$ = new Subject();
 
   blnShowSpinner: boolean = false;
   blnEmailExist: boolean = false;
@@ -26,6 +29,11 @@ export class RegisterComponent {
     private objChRef : ChangeDetectorRef
   ) { }
 
+  ngOnDestroy() {
+    this.objDestroyed$.next(void 0);
+    this.objDestroyed$.complete();
+  }
+
   // Create a FormGroup with email, name, password, and cPassword (confirm password) form controls,
   // each with their own set of validators. The form group also has a validator to check if the password and confirm password fields match.
   objRegisterForm = this.objFormBuilder.group({
@@ -35,8 +43,7 @@ export class RegisterComponent {
     cPassword: ['', [Validators.required]]
   }, { validator: passwordMatchValidator });
 
-  // Method to send a POST request to the register endpoint with the form data
-  // if the form is valid.
+
   registerUser() {
     // Set the emailExist flag to false.
     this.blnEmailExist = false;
@@ -54,20 +61,20 @@ export class RegisterComponent {
       }
 
       // Send the register request to the server.
-      this.objUserService.createUser(payload).subscribe({
+      this.objUserService.createUser(payload).pipe(takeUntil(this.objDestroyed$)).subscribe({
         // On success, hide the spinner, show a success message, and redirect to the login page.
         next: () => {
           this.blnShowSpinner = false;
-          this.objCommonService.showSuccess('Registration Success')
-          this.objRouter.navigate(['/login'])
+          this.objCommonService.showSuccess('Registration Success');
+          this.objRouter.navigate(['/login']);
         },
         // On error, hide the spinner, set the emailExist flag to true, show an error message, and mark the email form control as pristine.
         error: () => {
           this.blnShowSpinner = false;
           this.blnEmailExist = true;
-          this.objCommonService.showError('Registration failed')
-          this.objRegisterForm.controls['email'].markAsPristine()
-          this.objChRef.markForCheck()
+          this.objCommonService.showError('Registration failed');
+          this.objRegisterForm.controls['email'].markAsPristine();
+          this.objChRef.markForCheck();
         }
       });
     }

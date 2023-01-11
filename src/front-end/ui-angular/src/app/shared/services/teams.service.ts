@@ -12,9 +12,10 @@ export class TeamsService {
 
   constructor(
     private objHttpClient: HttpClient
-    ) { }
+  ) { }
 
-  public getAllPlayersMiniList(): Observable<any> {
+  //fetch api fot teams that return name and is only
+  public getAllTeamsMiniList(): Observable<any> {
     return this.objHttpClient.get(`${this.API_ENDPOINT}teams/mini`)
   }
 

@@ -14,6 +14,7 @@ export class PlayersService {
     private objHttpClient: HttpClient
   ) { }
 
+  //function to fetch api for players list
   public getAllPlayers(intPage: number, objPayload : any): Observable<any> {
     return this.objHttpClient.get(`${this.API_ENDPOINT}players?limit=${AppConstants.PAGINATION_PAGE_SIZE}&page=${intPage}&name=${objPayload?.name}&team=${objPayload?.team}`)
   }

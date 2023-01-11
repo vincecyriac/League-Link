@@ -33,7 +33,7 @@
           </div>
           <div class="form-group mt-3">
             <label for="passwordInput">confirm password</label>
-            <input type="password" class="form-control" id="passwordInput" placeholder="Enter password" formControlName="cPassword">
+            <input type="password" class="form-control" id="cPasswordInput" placeholder="Enter password" formControlName="cPassword">
             <small *ngIf="(objRegisterForm.hasError('passwordMismatch') || objRegisterForm.controls['cPassword']?.invalid) && ((objRegisterForm.controls['password'].touched && objRegisterForm.controls['cPassword'].touched) || objFormSelector.submitted)">Passwords doesnot match</small>
           </div>
           <div class="mt-4 text-center">

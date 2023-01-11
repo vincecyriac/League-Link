@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 
@@ -8,7 +9,9 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./header.component.css'],
   changeDetection : ChangeDetectionStrategy.OnPush
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+
+  private objDestroyed$ = new Subject();
 
   strUserName !: string;
 
@@ -22,6 +25,11 @@ export class HeaderComponent implements OnInit {
     this.getCurrentUser()
   }
 
+  ngOnDestroy() {
+    this.objDestroyed$.next(void 0);
+    this.objDestroyed$.complete();
+  }
+
   // Method to logout the current user.
   logout() {
     this.objAuthService.logOut()
@@ -30,7 +38,7 @@ export class HeaderComponent implements OnInit {
   // Method to get the current user's details.
   getCurrentUser() {
     // Send a request to the server to get the current user's details.
-    this.objUserService.getCurrentUser().subscribe({
+    this.objUserService.getCurrentUser().pipe(takeUntil(this.objDestroyed$)).subscribe({
       // On success, set the userName to the first name of the current user.
       next: (objResponse) => {
         this.strUserName = objResponse.name.split(' ')[0],

@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subject, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/confirm-modal.component';
 import { CommonService } from 'src/app/shared/services/common.service';
@@ -15,7 +16,9 @@ import { CreateComponent } from '../create/create.component';
   styleUrls: ['./index.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class IndexComponent implements OnInit {
+export class IndexComponent implements OnInit, OnDestroy {
+
+  private objDestroyed$ = new Subject();
 
   @ViewChildren("selectionCheckbox") elCheckBoxes!: QueryList<ElementRef>;
 
@@ -56,77 +59,112 @@ export class IndexComponent implements OnInit {
     this.getTeamsList();
   }
 
+  ngOnDestroy() {
+    this.objDestroyed$.next(void 0);
+    this.objDestroyed$.complete();
+  }
+
   getPlayersList() {
+    // Show the spinner to indicate loading
     this.blnShowSpinner = true;
-    this.objPlayersService.getAllPlayers(this.objPaginationData.currentPage, this.objSearchForm.value).subscribe({
-      // On success, hide the spinner, show a success message, and redirect to the home page.
+    // Call the service to fetch all players data
+    this.objPlayersService.getAllPlayers(this.objPaginationData.currentPage, this.objSearchForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next: (objResponse) => {
+        // On success, hide the spinner, assign the response to the players data property
+        // and triggers change detection.
         this.objPlayersData = objResponse;
         this.blnShowSpinner = false;
         this.objChRef.markForCheck();
       },
-      // On error, hide the spinner and show an error message.
-      error: () => {
+      error: (error) => {
+        // On error, hide the spinner and show an error message.
         this.blnShowSpinner = false;
-        this.objCommonService.showError('Something went Wrong')
+        this.objCommonService.showError('Something went Wrong');
         this.objChRef.markForCheck();
       }
     });
   }
 
+
   getTeamsList() {
-    this.objTeamsService.getAllPlayersMiniList().subscribe({
+    // Call the service to fetch all teams data
+    this.objTeamsService.getAllTeamsMiniList().pipe(takeUntil(this.objDestroyed$)).subscribe({
       next: (objResponse) => {
+        // On success, assign the response rows to team list property
+        // and triggers change detection
         this.arrTeamList = objResponse.rows;
         this.objChRef.markForCheck();
+      },
+      error: (error) => {
+        // On error, show an error message and log the error in console for better debugging
+        this.objCommonService.showError('Something went Wrong')
+        this.objChRef.markForCheck();
+        console.log('Error Occured', error);
       }
     });
   }
 
   searchPlayers() {
+    // Reset current page to 1
     this.objPaginationData.currentPage = 1;
-    this.getPlayersList()
+    // Call the getPlayersList function
+    this.getPlayersList();
   }
 
-  handlePageChange(intPage: any) {
-    window.scrollTo(0, 0)
+
+  handlePageChange(intPage: number) {
+    // Scroll to top of the page on page change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Update current page in pagination data
     this.objPaginationData.currentPage = intPage;
-    this.getPlayersList()
+    // call getPlayersList function to load the new page
+    this.getPlayersList();
   }
 
   openModal(intModalId: number, intPlayerId?: number) {
+    // Open the modal with specified id, with size 'lg' and centered
     const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: 'lg', centered: true });
-    if (intModalId == 1)
-      modalRef.componentInstance.intPlayerId = intPlayerId
+    // If the modal is of type 1, set the player id on the modal instance
+    if (intModalId === 1) {
+      modalRef.componentInstance.intPlayerId = intPlayerId;
+    }
     modalRef.result.then((result) => {
-      if(result == 1 ){
-        this.deletePlayers()
+      // On modal close, check the returned result
+      // if result is 1, call deletePlayers function
+      // otherwise, call getPlayersList function
+      if (result === 1) {
+        this.deletePlayers();
       } else {
-        this.getPlayersList()
+        this.getPlayersList();
       }
-    }, (reason) => {});
+    }, (reason) => { });
   }
 
-  //handle select all events
-  handleSelectAll(objEvent: any) {
-    if (objEvent.target.checked) {
-      this.arrSelectedList = this.objPlayersData.rows.map((objPlayer: any) => objPlayer.id);
-      this.elCheckBoxes.forEach(element => { element.nativeElement.checked = true });
-      this.blnAllSelected = true;
-    }
-    else {
-      this.elCheckBoxes.forEach(element => { element.nativeElement.checked = false });
-      this.blnAllSelected = false;
-      this.arrSelectedList = [];
-    }
-    this.objChRef.markForCheck()
+  handleSelectAll(event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+    // If the select all checkbox is checked, assign all player ids to the selected list, otherwise empty it
+    this.arrSelectedList = checkbox.checked ? this.objPlayersData.rows.map((player: any) => player.id) : [];
+    // Set all checkboxes' checked property to the value of the select all checkbox
+    this.elCheckBoxes.forEach(element => { element.nativeElement.checked = checkbox.checked });
+    // Set the all selected flag to the value of the select all checkbox
+    this.blnAllSelected = checkbox.checked;
+    //Mark for check
+    this.objChRef.markForCheck();
   }
 
-  //handle single selection events
-  handleSingleSelection(objEvent: any, playerId: any) {
-    objEvent.target.checked ? this.arrSelectedList.push(playerId) : this.arrSelectedList.splice(this.arrSelectedList.indexOf(playerId), 1);
-    this.objPlayersData.rows.length == this.arrSelectedList.length ? this.blnAllSelected = true : this.blnAllSelected = false;
-    this.objChRef.markForCheck()
+  handleSingleSelection(event: Event, playerId: number) {
+    const checkbox = event.target as HTMLInputElement;
+    //If the checkbox is checked, push the player id to the selected list
+    if (checkbox.checked) {
+      this.arrSelectedList.push(playerId);
+    } else {
+      // If the checkbox is not checked, remove the player id from the selected list
+      this.arrSelectedList.splice(this.arrSelectedList.indexOf(playerId), 1);
+    }
+    // Set the all selected flag to true if the number of selected players is equal to the total number of players
+    this.blnAllSelected = this.objPlayersData.rows.length === this.arrSelectedList.length;
+    //Mark for check
+    this.objChRef.markForCheck();
   }
 
   deletePlayers() {
