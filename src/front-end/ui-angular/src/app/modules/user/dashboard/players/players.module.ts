@@ -7,12 +7,14 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { CreateComponent } from './create/create.component';
+import { DetailsComponent } from './details/details.component';
 
 
 @NgModule({
   declarations: [
     IndexComponent,
-    CreateComponent
+    CreateComponent,
+    DetailsComponent
   ],
   imports: [
     CommonModule,

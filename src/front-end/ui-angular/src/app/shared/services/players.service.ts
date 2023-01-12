@@ -28,4 +28,14 @@ export class PlayersService {
   public createPlayers(objPayload : any): Observable<any> {
     return this.objHttpClient.post(`${this.API_ENDPOINT}players`,objPayload)
   }
+
+  //function to get individual player details
+  public getPlayerById(intPlayerId : number): Observable<any> {
+    return this.objHttpClient.get(`${this.API_ENDPOINT}players/${intPlayerId}`)
+  }
+
+  //function to update individual player details
+  public updateIndividualPlayer(intPlayerId : number, objPayload : any): Observable<any> {
+    return this.objHttpClient.put(`${this.API_ENDPOINT}players/${intPlayerId}`, objPayload)
+  }
 }

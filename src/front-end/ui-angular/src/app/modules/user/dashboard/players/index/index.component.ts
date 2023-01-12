@@ -9,6 +9,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { PlayersService } from 'src/app/shared/services/players.service';
 import { TeamsService } from 'src/app/shared/services/teams.service';
 import { CreateComponent } from '../create/create.component';
+import { DetailsComponent } from '../details/details.component';
 
 @Component({
   selector: 'app-index',
@@ -36,7 +37,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   blnAllSelected: boolean = false;
   objModalList: any = {
     1: ConfirmModalComponent,
-    2: CreateComponent
+    2: CreateComponent,
+    3: DetailsComponent
   }
 
   objSearchForm = this.objFormBuilder.group({
@@ -100,7 +102,6 @@ export class IndexComponent implements OnInit, OnDestroy {
         // On error, show an error message and log the error in console for better debugging
         this.objCommonService.showError('Something went Wrong')
         this.objChRef.markForCheck();
-        console.log('Error Occured', error);
       }
     });
   }
@@ -125,24 +126,27 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.arrSelectedList = []
   }
 
-  openModal(intModalId: number) {
+  openModal(intModalId: number, intPlayerId? : number, strModalSize ?: string) {
     // Open the modal with specified id, with size 'lg' and centered
-    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: 'lg', centered: true });
+    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: strModalSize || 'lg', centered: true });
     // If the modal is of type 1, set the player id on the modal instance
     if (intModalId === 1) {
       modalRef.componentInstance.strMessage = "Are you sure you want to delete the selected players?";
       modalRef.componentInstance.strClass = 'btn-soft-danger';
+    } else if(intModalId === 2) {
+      modalRef.componentInstance.arrTeamsList = this.arrTeamList;
     } else {
       modalRef.componentInstance.arrTeamsList = this.arrTeamList;
+      modalRef.componentInstance.intPlayerId   = intPlayerId;
     }
     modalRef.result.then((result) => {
-      console.log(result)
       // On modal close, check the returned result
       // if result is 1, call deletePlayers function
       // otherwise, call getPlayersList function
       if (result === 1) {
         this.deletePlayers();
       } else {
+        this.objPaginationData.currentPage = 1;
         this.getPlayersList();
       }
     }, (reason) => { });
@@ -176,23 +180,36 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   deletePlayers() {
-    this.blnShowSpinner = true
-    if (this.arrSelectedList.length > 0)
+    // Show spinner to indicate to the user that the operation is in progress
+    this.blnShowSpinner = true;
+
+    // Check if any players are selected for deletion
+    if (this.arrSelectedList.length > 0) {
+      // Call the service method to delete the selected players
       this.objPlayersService.deletPlayers({ ids: this.arrSelectedList }).pipe(takeUntil(this.objDestroyed$)).subscribe({
         next: () => {
-          this.objCommonService.showSuccess('Deleted succesfully')
+          // Show success message and refresh the players list
+          this.objCommonService.showSuccess('Deleted succesfully');
+
+          // Check if current page is not first and equals to total number of pages and all players are deleted
           if (this.objPaginationData.currentPage != 1 && this.objPaginationData.currentPage == Math.ceil(this.objPlayersData.count / this.objPaginationData.pageSize) && this.arrSelectedList.length == this.objPlayersData.rows.length) {
-            this.objPaginationData.currentPage -= 1
+            this.objPaginationData.currentPage -= 1;
           }
+
+          // Reset selection and refresh the players list
           this.blnAllSelected = false;
-          this.arrSelectedList = []
+          this.arrSelectedList = [];
           this.getPlayersList();
+          this.objChRef.markForCheck()
         },
         error: () => {
+          // Hide spinner and show error message
           this.blnShowSpinner = false;
-          this.objCommonService.showError('Delete operation failed')
+          this.objCommonService.showError('Delete operation failed');
         }
-      })
+      });
+    }
   }
+
 
 }

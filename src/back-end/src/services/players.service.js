@@ -1,4 +1,4 @@
-const { Players, User, Teams } = require("../models/index.model");
+const { Players, User, Teams, Scorecard } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 const { Op } = require('sequelize');
 
@@ -53,6 +53,11 @@ async function getPlayerById(userId, playerId) {
                 model: Teams,
                 as: "team",
                 attributes: ["id", "name", "manager", "status"]
+            },
+            {
+                model: Scorecard,
+                as: 'scorecard',
+                // attributes: ["player_id", "match_id", "runs", "wickets"]
             }
         ]
     });
@@ -61,6 +66,11 @@ async function getPlayerById(userId, playerId) {
 
 // Retrieves a player by ID, along with its team details
 async function createPlayers(playersData) {
+    playersData = playersData.map(player => {
+        if (player.team_id === 'null') {
+            return { ...player, team_id: null };
+        }
+    })
     const transaction = await sequelize.transaction();
     try {
         // Create the player with the given data and include its players in the transaction
@@ -106,7 +116,7 @@ async function deletePlayers(playersData) {
         // soft delete the players with the given ids 
         for (const playerId of playersData.ids) {
             const player = await Players.findByPk(playerId)
-            if(player.status == 0)
+            if (player.status == 0)
                 throw new Error()
             await player.update({ status: 0 }, { transaction });
         }
@@ -125,6 +135,7 @@ async function deletePlayers(playersData) {
 
 async function updatePlayer(playerId, playerData) {
     // Start a transaction
+    playerData.team_id = playerData.team_id == 'null' ? null : playerData.team_id
     const transaction = await sequelize.transaction();
 
     try {

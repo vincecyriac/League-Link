@@ -10,7 +10,7 @@ import { PlayersService } from 'src/app/shared/services/players.service';
   selector: 'app-create',
   templateUrl: './create.component.html',
   styleUrls: ['./create.component.css'],
-  changeDetection:ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateComponent implements OnDestroy {
 
@@ -18,7 +18,7 @@ export class CreateComponent implements OnDestroy {
 
   @Input() arrTeamsList!: Array<any>;
 
-  blnShowSpinner : boolean = false;
+  blnShowSpinner: boolean = false;
 
   objUserCreateForm = this.objFormBuilder.group({
     players: this.objFormBuilder.array([this.getNewPlayerForm()])
@@ -38,47 +38,65 @@ export class CreateComponent implements OnDestroy {
   }
 
   openCloseModal(intStatus: number) {
-    if (intStatus == 1)
-      this.objActiveModal.close(2)
-    else
-      this.objActiveModal.dismiss()
-  }
-
-  getNewPlayerForm() {
-    return this.objFormBuilder.group({
-      name     : ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(AppConstants.NAME_REGEX)]],
-      phone    : ['', [Validators.required, Validators.minLength(10), Validators.maxLength(13), Validators.pattern(AppConstants.NUMBER_REGEX)]],
-      team_id  : [null, []]
-    });
-  }
-
-  addPlayer(){
-    let arrPlayers =  this.objUserCreateForm.get('players') as FormArray
-    arrPlayers.push(this.getNewPlayerForm());
-    this.objChRef.markForCheck();
-  }
-
-  deletePlayer(intIndex : any){
-    let arrPlayers =  this.objUserCreateForm.get('players') as FormArray
-    arrPlayers.removeAt(intIndex)
-    this.objChRef.markForCheck();
-  }
-
-  createUsers(){
-    this.blnShowSpinner = true;
-    if(this.objUserCreateForm.valid){
-      this.objPlayersService.createPlayers(this.objUserCreateForm.value.players).pipe(takeUntil(this.objDestroyed$)).subscribe({
-        next : () => {
-          this.objCommonService.showSuccess("Players added successfully");
-          this.blnShowSpinner = false;
-          this.openCloseModal(1)
-        },
-        error : () => {
-          this.objCommonService.showError("Operation failed")
-          this.blnShowSpinner = false;
-        }
-      })
+    // Check if intStatus is 1
+    if (intStatus == 1) {
+      // Close the modal and pass a value 2
+      this.objActiveModal.close(2);
+    } else {
+      // Dismiss the modal
+      this.objActiveModal.dismiss();
     }
   }
 
+  getNewPlayerForm() {
+    //returns a form group for players form array
+    return this.objFormBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(AppConstants.NAME_REGEX)]],
+      phone: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(13), Validators.pattern(AppConstants.NUMBER_REGEX)]],
+      team_id: [null, []]
+    });
+  }
+
+  addPlayer() {
+    // Get the 'players' FormArray from the 'objUserCreateForm' FormGroup
+    let arrPlayers = this.objUserCreateForm.get('players') as FormArray
+    // Add a new player FormGroup to the 'players' FormArray
+    arrPlayers.push(this.getNewPlayerForm());
+    // Tell Angular to check and update the component and its children
+    this.objChRef.markForCheck();
+  }
+
+  deletePlayer(intIndex: any) {
+    // Get the 'players' FormArray from the 'objUserCreateForm' FormGroup
+    let arrPlayers = this.objUserCreateForm.get('players') as FormArray
+    // Remove the player form element at the specified index
+    arrPlayers.removeAt(intIndex)
+    // Tell Angular to check and update the component and its children
+    this.objChRef.markForCheck();
+  }
+
+  createUsers() {
+    console.log(this.objUserCreateForm.value)
+    // Check if the form is valid
+    if (this.objUserCreateForm.valid) {
+      // Show spinner to indicate to the user that the operation is in progress
+      this.blnShowSpinner = true;
+      // Call the service method to create new players
+      this.objPlayersService.createPlayers(this.objUserCreateForm.value.players).pipe(takeUntil(this.objDestroyed$)).subscribe({
+        next: () => {
+          // Show success message and close the modal
+          this.objCommonService.showSuccess("Players added successfully");
+          this.blnShowSpinner = false;
+          this.objChRef.markForCheck();
+          this.openCloseModal(1)
+        },
+        error: () => {
+          // Show error message and hide the spinner
+          this.objCommonService.showError("Operation failed")
+          this.blnShowSpinner = false;
+          this.objChRef.markForCheck();
+        }
+      });
+    }
+  }
 }

@@ -22,6 +22,23 @@ body {
   background-color: #556ee6 !important;
 }
 
+.btn-primary {
+  background-color: #556ee6 !important;
+  color: white !important;
+  border-color: transparent !important;
+}
+.btn-secondary {
+  color: #fff !important;
+  background-color: #9d9d9d !important;
+  border-color: transparent !important;
+}
+
+.btn-danger {
+  color: #fff !important;
+  background-color: rgba(244, 106, 106, 1) !important;
+  border-color: transparent !important;
+}
+
 .btn-soft-primary {
   color: #556ee6 !important;
   background-color: rgba(85, 110, 230, .1) !important;

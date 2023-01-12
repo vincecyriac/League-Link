@@ -5,7 +5,7 @@ const { getSignedUrl } = require('../utils/s3.utils');
 //create a sequelize model for user
 const User = sequelize.define('users', {
     id          : { type: DataTypes.INTEGER, autoIncrement: true, unique: true, primaryKey: true },
-    name        : { type: DataTypes.STRING(255), allowNull: false },
+    name        : { type: DataTypes.STRING(50), allowNull: false },
     email       : { type: DataTypes.STRING(255), allowNull: false }, 
     password    : { type: DataTypes.STRING(255), allowNull: false },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
@@ -23,9 +23,9 @@ const User = sequelize.define('users', {
 const Teams = sequelize.define('teams', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
-    name        : { type: DataTypes.STRING(255), allowNull: false },
-    image_url   : { type: DataTypes.STRING(45), allowNull: false },
-    manager     : { type: DataTypes.STRING(100), allowNull: false },
+    name        : { type: DataTypes.STRING(50), allowNull: false },
+    image_url   : { type: DataTypes.STRING(100), allowNull: false },
+    manager     : { type: DataTypes.STRING(50), allowNull: false },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at  : { type: DataTypes.DATE, allowNull: false },
     updated_at  : { type: DataTypes.DATE, allowNull: false }
@@ -40,12 +40,12 @@ const Teams = sequelize.define('teams', {
 //create a sequelize model for tournaments
 const Tournaments = sequelize.define('tournaments', {
     id              : { type: DataTypes.INTEGER, autoIncrement: true, unique: true, primaryKey: true, field: 'id' },
-    name            : { type: DataTypes.STRING(255), allowNull: false },
+    name            : { type: DataTypes.STRING(50), allowNull: false },
     user_id         : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
     start_date      : { type: DataTypes.DATEONLY, allowNull: false },
     end_date        : { type: DataTypes.DATEONLY, allowNull: false },
     number_of_teams : { type: DataTypes.INTEGER, allowNull: false },
-    image_url       : { type: DataTypes.STRING(255), allowNull: false },
+    image_url       : { type: DataTypes.STRING(100), allowNull: false },
     status          : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at      : { type: DataTypes.DATE, allowNull: false },
     updated_at      : { type: DataTypes.DATE, allowNull: false }
@@ -86,8 +86,8 @@ const Matches = sequelize.define('matches', {
     match_type_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'match_types', key: 'id' } },
     team1_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
     team2_id        : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'teams', key: 'id' } },
-    start_time      : { type: DataTypes.DATE, allowNull: false },
-    location        : { type: DataTypes.STRING(255), allowNull: false },
+    time            : { type: DataTypes.DATE, allowNull: false },
+    location        : { type: DataTypes.STRING(50), allowNull: false },
     winner_team_id  : { type: DataTypes.INTEGER, allowNull: true, references: { model: 'teams', key: 'id' } },
     status          : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at      : { type: DataTypes.DATE, allowNull: false },
@@ -118,7 +118,7 @@ const matchTypes = sequelize.define('match_types', {
 const Players = sequelize.define('players', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     team_id     : { type: DataTypes.INTEGER, allowNull: true, references: { model: 'teams', key: 'id' } },
-    name        : { type: DataTypes.STRING(255), allowNull: false },
+    name        : { type: DataTypes.STRING(50), allowNull: false },
     phone       : { type: DataTypes.STRING(13), allowNull: false },
     user_id     : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
@@ -132,12 +132,13 @@ const Players = sequelize.define('players', {
     underscored     : true
 });
 
+//create a sequelize model for scorecard
 const Scorecard = sequelize.define('scorecard', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     match_id    : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'matches', key: 'id' } },
     player_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'players', key: 'id' } },
-    runs        : { type: DataTypes.INTEGER, allowNull: false },
-    wickets     : { type: DataTypes.INTEGER, allowNull: false },
+    runs        : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
+    wickets     : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
     created_at  : { type: DataTypes.DATE, allowNull: false },
     updated_at  : { type: DataTypes.DATE, allowNull: false }
@@ -161,14 +162,14 @@ Teams.belongsToMany(Tournaments, { through: 'tournament_teams', foreignKey: 'tea
 
 //Tournament table associations
 Tournaments.hasMany( Matches, {foreignKey : 'tournament_id', as : 'matches'})
-Tournaments.belongsTo(User, { foreignKey: 'user_id', });
+Tournaments.belongsTo(User);
 Tournaments.belongsToMany(Teams, { through: 'tournament_teams', foreignKey: 'tournament_id' });
 
 //Matches table association
 Matches.belongsTo(Tournaments);
 Matches.belongsTo(Teams)
 Matches.belongsTo(matchTypes)
-Matches.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
+Matches.hasMany(Scorecard, { foreignKey : 'match_id', as : 'scorecard'})
 
 //matchTypes table associations
 Scorecard.hasMany(Matches)
@@ -176,10 +177,10 @@ Scorecard.hasMany(Matches)
 //Players table associations
 Players.belongsTo(User)
 Players.belongsTo(Teams, {as : 'team'})
-Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scores'})
+Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scorecard'})
 
 //Scorecard table associations
-Scorecard.belongsTo(Players)
+Scorecard.belongsTo(Players);
 Scorecard.belongsTo(Matches)
 
 // Define a prototype method for the Teams model that returns a signed URL for the team's image
@@ -188,15 +189,15 @@ Teams.prototype.getSignedUrl = async function () {
     const signedUrl = await getSignedUrl(this.getDataValue('image_url'));
     // Return the signed URL
     return signedUrl;
-  };
-  
-  // Define a prototype method for the Tournaments model that returns a signed URL for the tournament's image
-  Tournaments.prototype.getSignedUrl = async function () {
+};
+
+// Define a prototype method for the Tournaments model that returns a signed URL for the tournament's image
+Tournaments.prototype.getSignedUrl = async function () {
     // Call the getSignedUrl function with the tournament's image URL as the argument
     const signedUrl = await getSignedUrl(this.getDataValue('image_url'));
     // Return the signed URL
     return signedUrl;
-  };
+};
   
 
 module.exports = {User, Teams, Tournaments, TournamentTeams, Matches, Players, Scorecard}

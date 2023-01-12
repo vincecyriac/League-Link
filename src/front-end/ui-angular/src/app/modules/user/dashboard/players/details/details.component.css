@@ -1,0 +1,20 @@
+.mod-table-cell:nth-child(1){
+  flex: 1;
+}
+.mod-table-cell:nth-child(2){
+  flex: 1;
+}
+.mod-table-cell:nth-child(3){
+  flex: 1;
+}
+.mod-table-cell:nth-child(4){
+  width: 110px;
+}
+.mod-table-cell:nth-child(5){
+  width: 70px;
+  justify-content: center;
+}
+.mod-table-cell:nth-child(6){
+  width: 70px;
+  justify-content: center;
+}

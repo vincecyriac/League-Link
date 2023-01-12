@@ -41,9 +41,10 @@ const getplayerById = async (req, res, next) => {
             res.status(404).send({ message: "Player not found" });
         }
     } catch (error) {
+        console.log(error)
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        res.status(400).send(error);
     }
 };
 

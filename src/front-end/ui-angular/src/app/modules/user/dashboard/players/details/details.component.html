@@ -1,0 +1,79 @@
+
+<div class="details-modal p-3 pb-">
+  <div class="row mt-3 mb-3">
+    <div class="col-12 text-center">
+      <h5>
+        {{objPlayerDetails?.player?.name}}
+      </h5>
+    </div>
+  </div>
+  <div class="modal-body pb-0 pt-0">
+    <form [formGroup]="objPlayerUpdateForm" #objFormSelector="ngForm" (ngSubmit)="updateUser()">
+      <div class="row">
+        <div class="col-12">
+          <h6>
+            Update plater details
+          </h6>
+        </div>
+        <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+          <label class="required">Name</label>
+          <input type="text" class="form-control" placeholder="Name" formControlName="name">
+          <small *ngIf="objPlayerUpdateForm.controls['name'].invalid && (objFormSelector.submitted || objPlayerUpdateForm.controls['name'].touched)">Invalid name</small>
+        </div>
+        <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+          <label class="required">Phone</label>
+          <input type="text" class="form-control" placeholder="Phone" formControlName="phone">
+          <small *ngIf="objPlayerUpdateForm.controls['phone'].invalid && (objFormSelector.submitted || objPlayerUpdateForm.controls['phone'].touched)">Invalid phone</small>
+        </div>
+        <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
+          <label>Team</label>
+          <select class="form-control" id="exampleFormControlSelect1" formControlName="team_id">
+            <option [value]="null">Select team</option>
+            <ng-container *ngFor="let team of arrTeamsList">
+              <option [value]="team.id">{{team.name}}</option>
+            </ng-container>
+          </select>
+        </div>
+        <div class="col-12 mt-4 text-center">
+          <button class="btn btn-primary me-2" type="submit">Update</button>
+        </div>
+      </div>
+    </form>
+    <div class="row mt-4">
+      <div class="col-12">
+        <h6>
+          Score card
+        </h6>
+      </div>
+      <div class="col-12">
+        <div class="mod-table-container">
+          <div class="mod-table">
+            <div class="mod-table-row mod-table-head">
+              <div class="mod-table-cell">Tournament</div>
+              <div class="mod-table-cell">Match</div>
+              <div class="mod-table-cell">Team</div>
+              <div class="mod-table-cell">Date</div>
+              <div class="mod-table-cell">Runs</div>
+              <div class="mod-table-cell">Wickets</div>
+            </div>
+            <ng-container *ngFor="let score of objPlayerDetails?.scoreCard.rows">
+              <div class="mod-table-row mod-table-data">
+                <div class="mod-table-cell">ISL</div>
+                <div class="mod-table-cell">Argentina vs Portugal</div>
+                <div class="mod-table-cell">team</div>
+                <div class="mod-table-cell">Date</div>
+                <div class="mod-table-cell">Runs</div>
+                <div class="mod-table-cell">Wickets</div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row modal-foot m-4">
+    <div class="col-12 text-center">
+      <button class="btn btn-secondary me-2" type="button">close</button>
+    </div>
+  </div>
+</div>
