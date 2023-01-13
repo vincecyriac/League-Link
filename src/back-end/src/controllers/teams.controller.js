@@ -5,11 +5,12 @@ const getAllTeams = async (req, res, next) => {
     try {
         const requiredFields = ["id", "user_id", "name", "manager", "image_url", "status", "created_at", "updated_at"]
         // Call the service function to get all teams for the user
-        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, req.body.limit, req.body.offset, requiredFields);
+        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, req.body.limit, req.body.offset, requiredFields, req.query.name);
 
         // Send the response back to the client
         res.send(teamsResponse);
     } catch (error) {
+        console.log(error)
         // return bad request
         global.logger.error(error.stack)
         res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
@@ -21,7 +22,7 @@ const getAllTeamsMiniList = async (req, res, next) => {
     try {
         const requiredFields = ["id", "name"]
         // Call the service function to get all teams for the user
-        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, null, null, requiredFields);
+        const teamsResponse = await teamsService.getAllTeams(req.tokenData.id, null, null, requiredFields, '');
 
         // Send the response back to the client
         res.send(teamsResponse);
@@ -96,4 +97,28 @@ const updateTeam = async (req, res, next) => {
     }
 };
 
-module.exports = { getAllTeams, getTeamById, createTeam, updateTeam, getAllTeamsMiniList };
+const deleteTeam = async (req, res, next) => {
+    try {
+        // Call the service function to update the team
+        const teamExist = await teamsService.getTeamById(req.tokenData.id,req.params.teamId);
+        console.log(teamExist)
+        if (!teamExist) {
+            // Return error response if team not found
+            return res.status(404).send({ message: "Team not found" });
+        }
+        //update the team
+        const team = await teamsService.deleteTeam(req.params.teamId)
+        if (team instanceof Error)
+            return res.status(400).send({ message: "failed to delete team"});
+        else
+            // Return success response with team ID
+            res.send({ message: "Team deleted"});
+
+    } catch (error) {
+        // return bad request
+        global.logger.error(error.stack)
+        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+    }
+};
+
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam, getAllTeamsMiniList, deleteTeam };

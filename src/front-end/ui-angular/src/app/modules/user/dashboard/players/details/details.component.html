@@ -1,9 +1,12 @@
 
 <div class="details-modal p-3 pb-">
+  <ng-container *ngIf="blnShowSpinner">
+    <app-spinner></app-spinner>
+  </ng-container>
   <div class="row mt-3 mb-3">
     <div class="col-12 text-center">
       <h5>
-        {{objPlayerDetails?.player?.name}}
+        {{objPlayerDetails?.name}}
       </h5>
     </div>
   </div>
@@ -50,20 +53,25 @@
           <div class="mod-table">
             <div class="mod-table-row mod-table-head">
               <div class="mod-table-cell">Tournament</div>
-              <div class="mod-table-cell">Match</div>
-              <div class="mod-table-cell">Team</div>
+              <div class="mod-table-cell">Player Team</div>
+              <div class="mod-table-cell">Opposite Team</div>
               <div class="mod-table-cell">Date</div>
               <div class="mod-table-cell">Runs</div>
               <div class="mod-table-cell">Wickets</div>
             </div>
-            <ng-container *ngFor="let score of objPlayerDetails?.scoreCard.rows">
+            <ng-container *ngIf="objPlayerDetails?.scorecard?.length == 0">
+              <div class="text-center mt-4">
+                No match details found
+              </div>
+            </ng-container>
+            <ng-container *ngFor="let score of objPlayerDetails?.scorecard">
               <div class="mod-table-row mod-table-data">
-                <div class="mod-table-cell">ISL</div>
-                <div class="mod-table-cell">Argentina vs Portugal</div>
-                <div class="mod-table-cell">team</div>
-                <div class="mod-table-cell">Date</div>
-                <div class="mod-table-cell">Runs</div>
-                <div class="mod-table-cell">Wickets</div>
+                <div class="mod-table-cell">{{ score?.match?.tournament?.name }}</div>
+                <div class="mod-table-cell">{{ score?.player_team == 1 ? score?.match?.team1?.name : score?.match?.team2?.name }}</div>
+                <div class="mod-table-cell">{{ score?.player_team == 2 ? score?.match?.team1?.name : score?.match?.team2?.name }}</div>
+                <div class="mod-table-cell">{{ score?.match?.time | date }}</div>
+                <div class="mod-table-cell">{{ score?.runs }}</div>
+                <div class="mod-table-cell">{{ score?.wickets }}</div>
               </div>
             </ng-container>
           </div>
@@ -73,7 +81,7 @@
   </div>
   <div class="row modal-foot m-4">
     <div class="col-12 text-center">
-      <button class="btn btn-secondary me-2" type="button">close</button>
+      <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
     </div>
   </div>
 </div>

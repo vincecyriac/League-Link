@@ -1,4 +1,4 @@
-const { Players, User, Teams, Scorecard } = require("../models/index.model");
+const { Players, User, Teams, Scorecard, Matches, Tournaments } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 const { Op } = require('sequelize');
 
@@ -48,6 +48,7 @@ async function getPlayerById(userId, playerId) {
             id: playerId
         },
         attributes: ["id", "user_id", "team_id", "name", "phone", "status", "created_at", "updated_at"],
+        order: [['scorecard', 'updated_at', 'DESC']],
         include: [
             {
                 model: Teams,
@@ -57,7 +58,35 @@ async function getPlayerById(userId, playerId) {
             {
                 model: Scorecard,
                 as: 'scorecard',
-                // attributes: ["player_id", "match_id", "runs", "wickets"]
+                attributes: ["id", "runs", "wickets", "player_team","updated_at"],
+                where : {
+                    status : 1
+                },
+                required : false,
+                include : [
+                    {
+                        model : Matches,
+                        as : 'match',
+                        attributes: ["time"],
+                        include : [
+                            {
+                                model : Tournaments,
+                                as : 'tournament',
+                                attributes : ['name']
+                            },
+                            {
+                                model : Teams,
+                                as : 'team1',
+                                attributes : ['name']
+                            },
+                            {
+                                model : Teams,
+                                as : 'team2',
+                                attributes : ['name']
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     });

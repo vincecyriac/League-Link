@@ -14,9 +14,14 @@ export class TeamsService {
     private objHttpClient: HttpClient
   ) { }
 
-  //fetch api fot teams that return name and is only
+  //fetch api for teams that return name and is only
   public getAllTeamsMiniList(): Observable<any> {
     return this.objHttpClient.get(`${this.API_ENDPOINT}teams/mini`)
+  }
+
+  //fetch api for list all teams
+  public getAllTeams(intPage : number, objPayload : any): Observable<any> {
+    return this.objHttpClient.get(`${this.API_ENDPOINT}teams?limit=${AppConstants.PAGINATION_PAGE_SIZE}&page=${intPage}&name=${objPayload?.name}`)
   }
 
 }

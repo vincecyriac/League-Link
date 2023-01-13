@@ -1,14 +1,18 @@
 const { Teams, Players } = require("../models/index.model");
 const sequelize = require("../config/db.config");
-const { deleteFromS3 } = require("../utils/s3.utils")
+const { deleteFromS3 } = require("../utils/s3.utils");
+const { Op } = require('sequelize');
 
 // Retrieves all teams that belong to a particular user
-async function getAllTeams(userId, limit, offset, fields) {
+async function getAllTeams(userId, limit, offset, fields, name) {
     // Find all teams with status 1 and the given user ID
     const teams = await Teams.findAndCountAll({
         where: {
             status: 1,
-            user_id: userId
+            user_id: userId,
+            name: {
+                [Op.like]: `%${name || ''}%`
+            }
         },
         attributes: fields,
         order: [
@@ -18,13 +22,14 @@ async function getAllTeams(userId, limit, offset, fields) {
         offset
     });
 
-    if(fields.includes("image'_url")){
+
+    if (fields.includes("image_url")) {
         // Modify each team to include a signed URL for their image
         const modifiedTeams = teams.rows.map(async team => {
             const signedUrl = await team.getSignedUrl();
             return { ...team.dataValues, image_url: signedUrl };
         });
-    
+
         // Wait for all modified teams to be processed and return the response
         teams.rows = await Promise.all(modifiedTeams);
     }
@@ -89,7 +94,7 @@ async function updateTeam(teamId, teamData) {
         const team = await Teams.findByPk(teamId)
         const imageKey = team.image_url
         await team.update(teamData, { transaction });
-        if(teamData.image_url && teamData.image_url != imageKey)
+        if (teamData.image_url && teamData.image_url != imageKey)
             await deleteFromS3(imageKey)
         // If there are no errors, commit the transaction
         await transaction.commit();
@@ -103,5 +108,24 @@ async function updateTeam(teamId, teamData) {
     }
 }
 
+async function deleteTeam(teamId) {
+    const transaction = await sequelize.transaction();
+    try {
 
-module.exports = { getAllTeams, getTeamById, createTeam, updateTeam };
+        // soft delete the players with the given ids 
+        const team = await Teams.findByPk(teamId)
+        await team.update({ status: 0 }, { transaction });
+        await deleteFromS3(team.image_url)
+        // If the team is successfully deleted and file removed from s3, commit the transaction
+        await transaction.commit();
+        return
+    } catch (error) {
+        // If there is an error, roll back the transaction and return error
+        await transaction.rollback();
+        global.logger.error(error.stack)
+        return error;
+    }
+}
+
+
+module.exports = { getAllTeams, getTeamById, createTeam, updateTeam, deleteTeam };

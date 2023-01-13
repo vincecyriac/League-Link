@@ -32,4 +32,7 @@ router.post('/', isAuthenticated, upload.single('image'), uploadToS3, teamsContr
 // PUT request to update a team
 router.put('/:teamId', isAuthenticated, upload.single('image'), uploadToS3, teamsController.updateTeam);
 
+// DELETE request to delete a team
+router.delete('/:teamId', isAuthenticated, teamsController.deleteTeam);
+
 module.exports = router;

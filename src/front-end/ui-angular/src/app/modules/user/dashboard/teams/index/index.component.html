@@ -1,0 +1,60 @@
+<main class="dash-body">
+  <h4>TEAM MANAGEMENT</h4>
+  <div class="card border-0 mt-4">
+    <div class="card-body">
+      <app-spinner *ngIf="blnShowSpinner"></app-spinner>
+      <div class="d-flex row justify-content-between pb-3">
+        <form class="d-flex col-md-8 align-items-center search-form" [formGroup]="objSearchForm" #objFormSelector="ngForm" (ngSubmit)="searchTeam()">
+          <input type="text" class="form-control mr-sm-2" formControlName="name" placeholder="Name">
+          <button type="submit" class="btn btn-primary me-2" placement="auto" ngbTooltip="Search players"><i
+              class="fa-solid fa-magnifying-glass"></i> </button>
+        </form>
+        <div class="col-md-4 d-flex justify-content-end table-menu mt-2 mt-md-0">
+          <button class="btn btn-soft-secondary me-2" placement="auto" ngbTooltip="Reload data" (click)="getTeamList()"> <i class="fa-solid fa-rotate-right"></i></button>
+          <button class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Add new team"> <i class="fa-solid fa-plus"></i></button>
+        </div>
+      </div>
+      <ng-container *ngIf="objTeamsData?.rows.length < 1">
+        <div class="text-center m-5">No players found!</div>
+      </ng-container>
+      <ng-container *ngIf="objTeamsData?.rows.length >= 1">
+        <div class="mod-table-container">
+          <div class="mod-table">
+            <div class="mod-table-row mod-table-head">
+              <div class="mod-table-cell">&nbsp;</div>
+              <div class="mod-table-cell">#</div>
+              <div class="mod-table-cell">Name</div>
+              <div class="mod-table-cell">Manager</div>
+              <div class="mod-table-cell">Updated date</div>
+              <div class="mod-table-cell">Action</div>
+            </div>
+            <ng-container *ngFor="let team of objTeamsData?.rows">
+              <div class="mod-table-row mod-table-data">
+                <div class="mod-table-cell">
+                  <img [src]="team.image_url" alt="..." class="img-thumbnail rounded-circle">
+                </div>
+                <div class="mod-table-cell">{{team.id}}</div>
+                <div class="mod-table-cell">{{team.name}}</div>
+                <div class="mod-table-cell">{{team.manager}}</div>
+                <div class="mod-table-cell">{{team.updated_at | date}}</div>
+                <div class="mod-table-cell">
+                  <button class="btn btn-sm btn-soft-primary me-1" placement="auto" ngbTooltip="View Team details"> <i class="fa-solid fa-eye"></i> </button>
+                  <button class="btn btn-sm btn-soft-danger ms-1" placement="auto" ngbTooltip="Delete Team"> <i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center">
+          <div class="mt-4 mod-pagination">
+            <ngb-pagination [collectionSize]="objTeamsData?.count" [page]="objPaginationData.currentPage"
+              [pageSize]="objPaginationData?.pageSize" [directionLinks]="objPaginationData?.directionLinks"
+              [maxSize]="objPaginationData?.maxSize" [size]="objPaginationData?.size"
+              (pageChange)="handlePageChange($event)">
+            </ngb-pagination>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</main>

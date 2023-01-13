@@ -137,6 +137,7 @@ const Scorecard = sequelize.define('scorecard', {
     id          : { type: DataTypes.INTEGER, allowNull: false, primaryKey: true, autoIncrement: true },
     match_id    : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'matches', key: 'id' } },
     player_id   : { type: DataTypes.INTEGER, allowNull: false, references: { model: 'players', key: 'id' } },
+    plater_team : { type: DataTypes.TINYINT, allowNull: false },
     runs        : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
     wickets     : { type: DataTypes.INTEGER, allowNull: false, defaultValue : 0 },
     status      : { type: DataTypes.TINYINT, allowNull: false, defaultValue : 1 },
@@ -167,21 +168,19 @@ Tournaments.belongsToMany(Teams, { through: 'tournament_teams', foreignKey: 'tou
 
 //Matches table association
 Matches.belongsTo(Tournaments);
-Matches.belongsTo(Teams)
+Matches.belongsTo(Teams, {foreignKey : 'team1_id', as : 'team1'})
+Matches.belongsTo(Teams, {foreignKey : 'team2_id', as : 'team2'})
 Matches.belongsTo(matchTypes)
 Matches.hasMany(Scorecard, { foreignKey : 'match_id', as : 'scorecard'})
 
-//matchTypes table associations
-Scorecard.hasMany(Matches)
-
 //Players table associations
 Players.belongsTo(User)
-Players.belongsTo(Teams, {as : 'team'})
+Players.belongsTo(Teams, {foreignKey: 'team_id', as : 'team'})
 Players.hasMany(Scorecard, { foreignKey : 'player_id', as : 'scorecard'})
 
 //Scorecard table associations
 Scorecard.belongsTo(Players);
-Scorecard.belongsTo(Matches)
+Scorecard.belongsTo(Matches, { as : 'match'})
 
 // Define a prototype method for the Teams model that returns a signed URL for the team's image
 Teams.prototype.getSignedUrl = async function () {

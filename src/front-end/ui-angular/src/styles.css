@@ -295,11 +295,3 @@ a {
     stroke-dashoffset: 4.5px;
   }
 }
-
-
-/* media queries */
-@media only screen and (max-width: 767px) {
-  .table-menu {
-    margin: 20px 0 10px 0 !important;
-  }
-}
