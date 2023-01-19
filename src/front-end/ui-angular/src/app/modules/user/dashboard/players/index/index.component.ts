@@ -126,7 +126,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   openModal(intModalId: number, intPlayerId? : number, strModalSize ?: string) {
     // Open the modal with specified id, with size 'lg' and centered
-    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: strModalSize || 'lg', centered: true, scrollable : true });
+    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: strModalSize || 'lg', centered: true });
     // If the modal is of type 1, set the player id on the modal instance
     if (intModalId === 1) {
       modalRef.componentInstance.strMessage = "Are you sure you want to delete the selected players?";

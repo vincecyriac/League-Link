@@ -1,4 +1,7 @@
 <div class="create-modal p-3 pb-">
+  <ng-container *ngIf="blnShowSpinner">
+    <app-spinner [blnRelativeClass]="true"></app-spinner>
+  </ng-container>
   <form [formGroup]="objUserCreateForm" #objFormSelector="ngForm" (ngSubmit)="createUsers()">
   <div class="row mt-3 mb-3">
     <div class="col-12 text-center">
@@ -47,8 +50,7 @@
       <div class="col-12 text-center">
         <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
         <button class="btn btn-primary" type="submit" [disabled]="blnShowSpinner">
-          <i *ngIf="blnShowSpinner" class="fa-solid fa-spinner fa-spin"></i>
-          <span *ngIf="!blnShowSpinner">Register</span>
+          Register
         </button>
       </div>
     </div>

@@ -18,7 +18,7 @@ const uploadToS3 = async (req, res, next) => {
     // Set up the parameters for the S3 upload
     const uploadParams = {
         Bucket: process.env.S3_BUCKET,
-        Key: `uploads/${req.originalUrl.split("/")[1]}/${Date.now()}.jpg`,
+        Key: `uploads/${req.originalUrl.split("/")[1]}/${Date.now()}.png`,
         Body: req.file.buffer,
     };
 

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { base64ToFile, ImageCroppedEvent } from 'ngx-image-cropper';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TeamsService } from 'src/app/shared/services/teams.service';
@@ -42,7 +42,24 @@ export class CreateComponent implements OnDestroy {
   }
 
   createTeam() {
-
+    if(this.objTeamCreateForm.valid){
+      this.blnShowSpinner = true;
+      let objPayload = new FormData()
+      objPayload.append('name', this.objTeamCreateForm?.value?.name || '');
+      objPayload.append('manager', this.objTeamCreateForm.value.manager || '');
+      objPayload.append('image', this.fileCroppedLogo);
+      this.objTeamsService.createTeam(objPayload).pipe(takeUntil(this.objDestroyed$)).subscribe({
+        next : () => {
+          this.blnShowSpinner = false;
+          this.objCommonService.showSuccess("Team created")
+          this.openCloseModal(1)
+        },
+        error : () => {
+          this.blnShowSpinner = false;
+          this.objCommonService.showError("Something went wrong")
+        }
+      })
+    }
   }
 
   openCloseModal(intStatus: number) {
@@ -76,9 +93,5 @@ export class CreateComponent implements OnDestroy {
 
   imageCropped(objEvent: any) {
     this.fileCroppedLogo = base64ToFile(objEvent.base64)
-    console.log(this.fileCroppedLogo)
   }
-
-
-
 }

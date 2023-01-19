@@ -1,4 +1,7 @@
 <div class="create-modal p-3 pb-">
+  <ng-container *ngIf="blnShowSpinner">
+    <app-spinner [blnRelativeClass]="true"></app-spinner>
+  </ng-container>
   <form [formGroup]="objTeamCreateForm" #objFormSelector="ngForm" (ngSubmit)="createTeam()">
     <div class="row mt-3 mb-3">
       <div class="col-12 text-center">
@@ -23,34 +26,20 @@
           <div class="col-12 mb-2 mt-2 form-group">
             <label class="required me-2">Logo</label>
             <input type="file" class="form-control form-control-file" formControlName="image" (change)="handleImageSelect($event)">
-            <small *ngIf="objTeamCreateForm.controls['image'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['image'].touched)">Invalid image, Only jpg, jpeg,png files can be selected</small>
+            <small *ngIf="objTeamCreateForm.controls['image'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['image'].touched)">Invalid image, Only jpg, jpeg,png files can be uploaded</small>
           </div>
+        </div>
+        <div class="file-cropper">
+          <image-cropper [imageChangedEvent]="fileCropperLogo" [maintainAspectRatio]="true" [containWithinAspectRatio]="false"
+            [aspectRatio]="1 / 1" [resizeToWidth]="500" [cropperMinWidth]="500" [onlyScaleDown]="true" [roundCropper]="true"
+            (imageCropped)="imageCropped($event)" [canvasRotation]="0" [alignImage]="'center'" format="png"></image-cropper>
         </div>
         <div class="row modal-foot m-4">
           <div class="col-12 text-center">
             <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
-            <button class="btn btn-primary" type="submit" [disabled]="blnShowSpinner">
-              <i *ngIf="blnShowSpinner" class="fa-solid fa-spinner fa-spin"></i>
-              <span *ngIf="!blnShowSpinner">Register</span>
-            </button>
+            <button class="btn btn-primary" type="submit">Register</button>
           </div>
         </div>
-        <div class="file-cropper">
-          <image-cropper
-              [imageChangedEvent]="fileCropperLogo"
-              [maintainAspectRatio]="true"
-              [containWithinAspectRatio]="false"
-              [aspectRatio]="1 / 1"
-              [resizeToWidth]="200"
-              [cropperMinWidth]="200"
-              [onlyScaleDown]="true"
-              [roundCropper]="true"
-              (imageCropped)="imageCropped($event)"
-              [canvasRotation]="0"
-              [alignImage]="'center'"
-              format="png"
-          ></image-cropper>
-      </div>
       </div>
     </div>
   </form>

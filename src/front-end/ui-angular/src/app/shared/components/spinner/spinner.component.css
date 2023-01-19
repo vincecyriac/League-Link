@@ -12,6 +12,16 @@
   width: 100%;
   font-size: 30px;
 }
+
+.spinner-container.relative-size {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(255 255 255 / 80%);
+  font-size: 30px;
+  border-radius: .5rem;
+}
 .lds-ellipsis {
   display: inline-block;
   position: relative;

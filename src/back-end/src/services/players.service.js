@@ -97,9 +97,13 @@ async function getPlayerById(userId, playerId) {
 async function createPlayers(playersData) {
     playersData = playersData.map(player => {
         if (player.team_id === 'null') {
+            console.log(player)
             return { ...player, team_id: null };
+        } else {
+            return player
         }
     })
+    console.log(playersData)
     const transaction = await sequelize.transaction();
     try {
         // Create the player with the given data and include its players in the transaction

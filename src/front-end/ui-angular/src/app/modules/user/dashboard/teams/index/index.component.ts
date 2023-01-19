@@ -47,7 +47,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getTeamList()
-    const modalRef = this.objModalService.open(this.objModalList[2], { size:'lg', centered: true, scrollable : false });
   }
 
   ngOnDestroy() {
@@ -67,7 +66,6 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.objTeamsService.getAllTeams(this.objPaginationData.currentPage, this.objSearchForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next : (objResponse : any) => {
         this.blnShowSpinner = false;
-        console.log(objResponse)
         this.objTeamsData = objResponse;
         this.objChRef.markForCheck()
       },
@@ -82,7 +80,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   openModal(intModalId: number, intTeamId? : number, strModalSize ?: string) {
     this.intSelectedTeamId = intTeamId;
     // Open the modal with specified id, with size 'lg' and centered
-    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: strModalSize || 'lg', centered: true, scrollable : true });
+    const modalRef = this.objModalService.open(this.objModalList[intModalId], { size: strModalSize || 'lg', centered: true });
     // If the modal is of type 1, set the player id on the modal instance
     if (intModalId === 1) {
       modalRef.componentInstance.strMessage = "Are you sure you want to delete the team?";
@@ -113,7 +111,6 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   deleteTeam(intTeamId : any){
-    console.log("delete", intTeamId)
     this.blnShowSpinner = true;
     this.objTeamsService.deleteTeamById(intTeamId).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next : () => {

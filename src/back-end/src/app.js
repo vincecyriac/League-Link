@@ -12,8 +12,6 @@ const { logger, logAllRequests } = require('./utils/logger.utils')
 // Load environment variables from .env file
 dotenv.config();
 
-const { ORIGIN } = process.env;
-
 // Parse incoming request bodies in a middleware before your handlers, available under the req.body property
 app.use(express.json());
 

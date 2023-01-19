@@ -13,7 +13,7 @@ export class AppConstants {
     public static PASSWORD_REGEX = new RegExp(/^(?:(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9_!@~#%{}?><\'|$&()\\*-`.+,"]+))$/);
 
     // Pagination constants
-    public static PAGINATION_PAGE_SIZE = 20;
+    public static PAGINATION_PAGE_SIZE = 5;
     public static PAGINATION_DIRECTION_LINKS = true;
     public static PAGINATION_MAX_SIZE = 2;
     public static PAGINATION_SIZE = 'sm';
