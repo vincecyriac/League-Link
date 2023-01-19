@@ -1,13 +1,15 @@
 .spinner-container {
   display: flex;
   justify-content: center;
-  /* align-items: center; */
-  position: absolute;
-  height: calc(100% - 2rem);
+  position: fixed;
+  top: 120px;
+  left: 0;
+  height: calc(100vh - 120px);
   color: #556ee6 !important;
-  background-color: rgb(255 255 255 / 90%);
+  background-color: rgb(243, 243, 249, 0.8);
+  align-items: center;
   z-index: 99;
-  width: calc(100% - 2rem);
+  width: 100%;
   font-size: 30px;
 }
 .lds-ellipsis {
@@ -63,5 +65,11 @@
   }
   100% {
     transform: translate(24px, 0);
+  }
+}
+@media only screen and (max-width: 767px) {
+  .spinner-container {
+    top: 70px;
+    height: calc(100vh - 70px);
   }
 }

@@ -6,18 +6,22 @@ import { IndexComponent } from './index/index.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ComponentsModule } from 'src/app/shared/components/components.module';
+import { CreateComponent } from './create/create.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 @NgModule({
   declarations: [
-    IndexComponent
+    IndexComponent,
+    CreateComponent
   ],
   imports: [
     CommonModule,
     TeamsRoutingModule,
     ReactiveFormsModule,
     NgbModule,
-    ComponentsModule
+    ComponentsModule,
+    ImageCropperModule
   ]
 })
 export class TeamsModule { }

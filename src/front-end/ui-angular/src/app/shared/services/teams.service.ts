@@ -24,4 +24,8 @@ export class TeamsService {
     return this.objHttpClient.get(`${this.API_ENDPOINT}teams?limit=${AppConstants.PAGINATION_PAGE_SIZE}&page=${intPage}&name=${objPayload?.name}`)
   }
 
+  //delete api for deleting a particular team
+  public deleteTeamById(intTeamId : number): Observable<any> {
+    return this.objHttpClient.delete(`${this.API_ENDPOINT}teams/${intTeamId}&`)
+  }
 }

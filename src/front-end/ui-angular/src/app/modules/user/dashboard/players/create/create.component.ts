@@ -26,7 +26,7 @@ export class CreateComponent implements OnDestroy {
 
   constructor(
     private objFormBuilder: FormBuilder,
-    public objActiveModal: NgbActiveModal,
+    private objActiveModal: NgbActiveModal,
     private objChRef: ChangeDetectorRef,
     private objPlayersService: PlayersService,
     private objCommonService: CommonService

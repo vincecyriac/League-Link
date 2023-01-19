@@ -54,21 +54,17 @@ const deleteFromS3 = async (key) => {
         global.logger.error(error.stack)
         return error
     }
-
-    // Continue to the next middleware function
-    next();
 };
 
 // Function to get a signed URL for a file in S3
 const getSignedUrl = async (key) => {
     try {
         // Get the signed URL for the specified S3 key
-        const url = await s3.getSignedUrl('getObject', {
+        return s3.getSignedUrl('getObject', {
             Bucket: process.env.S3_BUCKET,
             Key: key,
             Expires: parseInt(process.env.PRESIGNED_LINK_EXPIRE),
         })
-        return url;
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)

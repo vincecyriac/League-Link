@@ -1,0 +1,19 @@
+.modal-foot .btn{
+  width: 105px !important;
+}
+.form-array-head{
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  align-items: center;
+}
+.modal-body label{
+  font-size: 14px;
+}
+.modal-body label.required::after{
+  content: '*';
+  color: #FF0000;
+}
+.form-control-file{
+  height: auto !important;
+}

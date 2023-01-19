@@ -11,7 +11,7 @@
         </form>
         <div class="col-md-4 d-flex justify-content-end table-menu mt-2 mt-md-0">
           <button class="btn btn-soft-secondary me-2" placement="auto" ngbTooltip="Reload data" (click)="getTeamList()"> <i class="fa-solid fa-rotate-right"></i></button>
-          <button class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Add new team"> <i class="fa-solid fa-plus"></i></button>
+          <button class="btn btn-soft-primary me-2" placement="auto" ngbTooltip="Add new team" (click)="openModal(2)"> <i class="fa-solid fa-plus"></i></button>
         </div>
       </div>
       <ng-container *ngIf="objTeamsData?.rows.length < 1">
@@ -39,7 +39,7 @@
                 <div class="mod-table-cell">{{team.updated_at | date}}</div>
                 <div class="mod-table-cell">
                   <button class="btn btn-sm btn-soft-primary me-1" placement="auto" ngbTooltip="View Team details"> <i class="fa-solid fa-eye"></i> </button>
-                  <button class="btn btn-sm btn-soft-danger ms-1" placement="auto" ngbTooltip="Delete Team"> <i class="fa-solid fa-trash"></i></button>
+                  <button class="btn btn-sm btn-soft-danger ms-1" placement="auto" ngbTooltip="Delete Team" (click)="openModal(1,team.id)"> <i class="fa-solid fa-trash"></i></button>
                 </div>
               </div>
             </ng-container>
