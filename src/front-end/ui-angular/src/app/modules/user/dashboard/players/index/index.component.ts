@@ -23,7 +23,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   @ViewChildren("selectionCheckbox") elCheckBoxes!: QueryList<ElementRef>;
 
-  blnShowSpinner: boolean = false;
   objPlayersData !: any;
   objPaginationData: any = {
     pageSize: AppConstants.PAGINATION_PAGE_SIZE,
@@ -67,19 +66,19 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   getPlayersList() {
     // Show the spinner to indicate loading
-    this.blnShowSpinner = true;
+    this.objCommonService.setSpinnerStatus(true)
     // Call the service to fetch all players data
     this.objPlayersService.getAllPlayers(this.objPaginationData.currentPage, this.objSearchForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next: (objResponse) => {
         // On success, hide the spinner, assign the response to the players data property
         // and triggers change detection.
         this.objPlayersData = objResponse;
-        this.blnShowSpinner = false;
+        this.objCommonService.setSpinnerStatus(false)
         this.objChRef.markForCheck();
       },
       error: (error) => {
         // On error, hide the spinner and show an error message.
-        this.blnShowSpinner = false;
+    this.objCommonService.setSpinnerStatus(false)
         this.objCommonService.showError('Something went Wrong');
         this.objChRef.markForCheck();
       }
@@ -179,7 +178,7 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   deletePlayers() {
     // Show spinner to indicate to the user that the operation is in progress
-    this.blnShowSpinner = true;
+    this.objCommonService.setSpinnerStatus(true)
 
     // Check if any players are selected for deletion
     if (this.arrSelectedList.length > 0) {
@@ -193,7 +192,6 @@ export class IndexComponent implements OnInit, OnDestroy {
           if (this.objPaginationData.currentPage != 1 && this.objPaginationData.currentPage == Math.ceil(this.objPlayersData.count / this.objPaginationData.pageSize) && this.arrSelectedList.length == this.objPlayersData.rows.length) {
             this.objPaginationData.currentPage -= 1;
           }
-
           // Reset selection and refresh the players list
           this.blnAllSelected = false;
           this.arrSelectedList = [];
@@ -202,7 +200,7 @@ export class IndexComponent implements OnInit, OnDestroy {
         },
         error: () => {
           // Hide spinner and show error message
-          this.blnShowSpinner = false;
+    this.objCommonService.setSpinnerStatus(false)
           this.objCommonService.showError('Delete operation failed');
         }
       });

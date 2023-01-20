@@ -18,7 +18,6 @@ export class IndexComponent implements OnInit, OnDestroy {
 
   private objDestroyed$ = new Subject();
 
-  blnShowSpinner: boolean = false;
   objPaginationData: any = {
     pageSize: AppConstants.PAGINATION_PAGE_SIZE,
     maxSize: AppConstants.PAGINATION_MAX_SIZE,
@@ -62,15 +61,15 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   getTeamList(){
-    this.blnShowSpinner = true;
+    this.objCommonService.setSpinnerStatus(true)
     this.objTeamsService.getAllTeams(this.objPaginationData.currentPage, this.objSearchForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next : (objResponse : any) => {
-        this.blnShowSpinner = false;
+        this.objCommonService.setSpinnerStatus(false)
         this.objTeamsData = objResponse;
         this.objChRef.markForCheck()
       },
       error : () => {
-        this.blnShowSpinner = false;
+        this.objCommonService.setSpinnerStatus(false)
         this.objCommonService.showError("Something went wrong");
         this.objChRef.markForCheck()
       }
@@ -111,7 +110,7 @@ export class IndexComponent implements OnInit, OnDestroy {
   }
 
   deleteTeam(intTeamId : any){
-    this.blnShowSpinner = true;
+    this.objCommonService.setSpinnerStatus(true)
     this.objTeamsService.deleteTeamById(intTeamId).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next : () => {
         this.objCommonService.showSuccess("Team deleted")
@@ -120,7 +119,7 @@ export class IndexComponent implements OnInit, OnDestroy {
       },
       error : () => {
         this.objCommonService.showError("Something went wrong")
-        this.blnShowSpinner = false;
+        this.objCommonService.setSpinnerStatus(false)
       }
     })
   }

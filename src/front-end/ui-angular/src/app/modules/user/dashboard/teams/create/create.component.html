@@ -25,7 +25,7 @@
           </div>
           <div class="col-12 mb-2 mt-2 form-group">
             <label class="required me-2">Logo</label>
-            <input type="file" class="form-control form-control-file" formControlName="image" (change)="handleImageSelect($event)">
+            <input type="file" class="form-control form-control-file" formControlName="image" (change)="handleImageSelect($event)" accept=".jpg,.jpef,.png">
             <small *ngIf="objTeamCreateForm.controls['image'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['image'].touched)">Invalid image, Only jpg, jpeg,png files can be uploaded</small>
           </div>
         </div>

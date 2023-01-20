@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +8,8 @@ import { ToastrService } from 'ngx-toastr';
 export class CommonService {
 
   constructor(private objToastr: ToastrService) { }
+
+  private objSpinnerStatus$ = new BehaviorSubject<any>(false);
 
   // Show a success toast with the given message.
   showSuccess(message: string) {
@@ -28,5 +31,11 @@ export class CommonService {
     this.objToastr.clear();
   }
 
-
+  //get and set functions for common spinner status obeservable
+  get getSpinnerStatus(){
+    return this.objSpinnerStatus$.asObservable()
+  }
+  setSpinnerStatus(blnStatus : boolean){
+    this.objSpinnerStatus$.next(blnStatus);
+  }
 }
