@@ -1,7 +1,4 @@
 <div class="create-modal p-3 pb-">
-  <ng-container *ngIf="blnShowSpinner">
-    <app-spinner [blnRelativeClass]="true"></app-spinner>
-  </ng-container>
   <form [formGroup]="objTeamCreateForm" #objFormSelector="ngForm" (ngSubmit)="createTeam()">
     <div class="row mt-3 mb-3">
       <div class="col-12 text-center">

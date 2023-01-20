@@ -2,7 +2,6 @@
   <h4>PLAYER MANAGEMENT</h4>
   <div class="card border-0 mt-4">
     <div class="card-body">
-      <app-spinner *ngIf="blnShowSpinner"></app-spinner>
       <div class="d-flex row justify-content-between pb-3">
         <form class="d-flex col-md-8 align-items-center search-form" [formGroup]="objSearchForm"
           #objFormSelector="ngForm" (ngSubmit)="searchPlayers()">
