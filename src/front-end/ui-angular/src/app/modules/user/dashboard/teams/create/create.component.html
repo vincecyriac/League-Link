@@ -13,12 +13,12 @@
     <div class="modal-body pb-0 pt-0">
       <div class="mb-3">
         <div class="row">
-          <div class="col-sm-12 col-md-6 mb-2 mb-md-0 form-group">
+          <div class="col-sm-12 col-md-6 mb-2 mb-md-0 mt-2 mt-md-0 form-group">
             <label class="required">Name</label>
             <input type="text" class="form-control" placeholder="Name" formControlName="name">
             <small *ngIf="objTeamCreateForm.controls['name'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['name'].touched)">Invalid name</small>
           </div>
-          <div class="col-sm-12 col-md-6 mb-2 mb-md-0 form-group">
+          <div class="col-sm-12 col-md-6 mb-2 mb-md-0 mt-2 mt-md-0 form-group">
             <label class="required">Manager</label>
             <input type="text" class="form-control" placeholder="Manager" formControlName="manager">
             <small *ngIf="objTeamCreateForm.controls['manager'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['manager'].touched)">Invalid Manager</small>
