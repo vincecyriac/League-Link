@@ -1,12 +1,13 @@
-<div class="create-modal p-3 pb-">
+
+<div class="details-modal p-3">
   <ng-container *ngIf="blnShowSpinner">
     <app-spinner [blnRelativeClass]="true"></app-spinner>
   </ng-container>
-  <form [formGroup]="objTeamCreateForm" #objFormSelector="ngForm" (ngSubmit)="createTeam()">
+  <form [formGroup]="objTeamUpdateForm" #objFormSelector="ngForm" (ngSubmit)="updateTeam()">
     <div class="row mt-3 mb-3">
       <div class="col-12 text-center">
         <h4>
-          Add New Team
+          {{objTeamDetails?.name}}
         </h4>
       </div>
     </div>
@@ -18,25 +19,23 @@
             <input type="file" id="upload-logo" formControlName="image" (change)="handleImageSelect($event)" accept=".jpg,.jpef,.png" />
           </div>
           <label class="required">Logo</label>
-          <small *ngIf="objTeamCreateForm.controls['image'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['image'].touched)">Invalid image, Only jpg, jpeg,png files can be uploaded</small>
+          <small *ngIf="objTeamUpdateForm.controls['image'].invalid && (objFormSelector.submitted || objTeamUpdateForm.controls['image'].touched)">Invalid image, Only jpg, jpeg,png files can be uploaded</small>
         </div>
         <div class="row">
           <div class="col-sm-12 col-md-6 mb-2 mb-md-0 mt-2 mt-md-0 form-group">
             <label class="required">Name</label>
             <input type="text" class="form-control" placeholder="Name" formControlName="name">
-            <small *ngIf="objTeamCreateForm.controls['name'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['name'].touched)">Invalid name</small>
+            <small *ngIf="objTeamUpdateForm.controls['name'].invalid && (objFormSelector.submitted || objTeamUpdateForm.controls['name'].touched)">Invalid name</small>
           </div>
           <div class="col-sm-12 col-md-6 mb-2 mb-md-0 mt-2 mt-md-0 form-group">
             <label class="required">Manager</label>
             <input type="text" class="form-control" placeholder="Manager" formControlName="manager">
-            <small *ngIf="objTeamCreateForm.controls['manager'].invalid && (objFormSelector.submitted || objTeamCreateForm.controls['manager'].touched)">Invalid Manager</small>
+            <small *ngIf="objTeamUpdateForm.controls['manager'].invalid && (objFormSelector.submitted || objTeamUpdateForm.controls['manager'].touched)">Invalid Manager</small>
           </div>
         </div>
-        <div class="row modal-foot m-4">
-          <div class="col-12 text-center">
-            <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
-            <button class="btn btn-primary" type="submit">Register</button>
-          </div>
+        <div class="col-12 text-center mt-4">
+          <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
+          <button class="btn btn-primary" type="submit">Update</button>
         </div>
       </div>
     </div>

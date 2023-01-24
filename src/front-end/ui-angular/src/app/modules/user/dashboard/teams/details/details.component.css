@@ -2,13 +2,6 @@
   width: 105px !important;
 }
 
-.form-array-head {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-  align-items: center;
-}
-
 .modal-body label {
   font-size: 14px;
 }
@@ -35,7 +28,7 @@
 }
 
 .custom-file label:hover::after {
-  content: "Select";
+  content: "Change";
   position: absolute;
   left: 0;
   right: 0;

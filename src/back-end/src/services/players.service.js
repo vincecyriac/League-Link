@@ -1,12 +1,13 @@
 const { Players, User, Teams, Scorecard, Matches, Tournaments } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 const { Op } = require('sequelize');
+const { PLAYERS, SCORECARD } = require('../config/status.config')
 
 // Retrieves all teams that belong to a particular user
 async function getAllPlayers(userId, limit, offset, params, fields) {
     console.log(params)
     const whereClause = {
-        status: 1,
+        status: PLAYERS.ACTIVE,
         user_id: userId,
         name: {
             [Op.like]: `%${params.name || ''}%`
@@ -43,50 +44,16 @@ async function getPlayerById(userId, playerId) {
     // Find a player with status 1, the given user ID and player ID
     const player = await Players.findOne({
         where: {
-            status: 1,
+            status: PLAYERS.ACTIVE,
             user_id: userId,
             id: playerId
         },
         attributes: ["id", "user_id", "team_id", "name", "phone", "status", "created_at", "updated_at"],
-        order: [['scorecard', 'updated_at', 'DESC']],
         include: [
             {
                 model: Teams,
                 as: "team",
                 attributes: ["id", "name", "manager", "status"]
-            },
-            {
-                model: Scorecard,
-                as: 'scorecard',
-                attributes: ["id", "runs", "wickets", "player_team","updated_at"],
-                where : {
-                    status : 1
-                },
-                required : false,
-                include : [
-                    {
-                        model : Matches,
-                        as : 'match',
-                        attributes: ["time"],
-                        include : [
-                            {
-                                model : Tournaments,
-                                as : 'tournament',
-                                attributes : ['name']
-                            },
-                            {
-                                model : Teams,
-                                as : 'team1',
-                                attributes : ['name']
-                            },
-                            {
-                                model : Teams,
-                                as : 'team2',
-                                attributes : ['name']
-                            }
-                        ]
-                    }
-                ]
             }
         ]
     });
@@ -97,13 +64,11 @@ async function getPlayerById(userId, playerId) {
 async function createPlayers(playersData) {
     playersData = playersData.map(player => {
         if (player.team_id === 'null') {
-            console.log(player)
             return { ...player, team_id: null };
         } else {
             return player
         }
     })
-    console.log(playersData)
     const transaction = await sequelize.transaction();
     try {
         // Create the player with the given data and include its players in the transaction
@@ -149,9 +114,9 @@ async function deletePlayers(playersData) {
         // soft delete the players with the given ids 
         for (const playerId of playersData.ids) {
             const player = await Players.findByPk(playerId)
-            if (player.status == 0)
+            if (player.status == PLAYERS.DELETED)
                 throw new Error()
-            await player.update({ status: 0 }, { transaction });
+            await player.update({ status: PLAYERS.DELETED }, { transaction });
         }
 
         // If the player is successfully deleted, commit the transaction

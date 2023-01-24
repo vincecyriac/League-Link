@@ -7,6 +7,7 @@ import { ConfirmModalComponent } from 'src/app/shared/components/confirm-modal/c
 import { CommonService } from 'src/app/shared/services/common.service';
 import { TeamsService } from 'src/app/shared/services/teams.service';
 import { CreateComponent } from '../create/create.component';
+import { DetailsComponent } from '../details/details.component';
 
 @Component({
   selector: 'app-index',
@@ -28,7 +29,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   objTeamsData : any;
   objModalList: any = {
     1: ConfirmModalComponent,
-    2: CreateComponent
+    2: CreateComponent,
+    3: DetailsComponent
   }
   intSelectedTeamId !: number | null | undefined;
 
@@ -114,7 +116,8 @@ export class IndexComponent implements OnInit, OnDestroy {
     this.objTeamsService.deleteTeamById(intTeamId).pipe(takeUntil(this.objDestroyed$)).subscribe({
       next : () => {
         this.objCommonService.showSuccess("Team deleted")
-        this.objPaginationData.currentPage = 1;
+        if (this.objPaginationData.currentPage != 1 && this.objTeamsData.rows.length == 1)
+          this.objPaginationData.currentPage -= 1;
         this.getTeamList();
       },
       error : () => {

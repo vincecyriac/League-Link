@@ -1,7 +1,7 @@
 const userService = require("../services/users.service");
 const { compareSync } = require("bcrypt");
 const authUtils = require('../utils/auth.utils');
-
+const { USERS } = require("../config/status.config");
 // Function to handle login request
 const login = async (req, res, next) => {
     // Check if email is provided in request body
@@ -19,7 +19,7 @@ const login = async (req, res, next) => {
         }
         // Check if password is valid
         const isValidPassword = compareSync(req.body.password, userResponse.password);
-        if (!isValidPassword || userResponse.status !== 1) {
+        if (!isValidPassword || userResponse.status !== USERS.ACTIVE) {
             res.status(403).send({ message: "Invalid Credentials" });
             return
         }
@@ -57,7 +57,7 @@ const refreshToken = async (req, res, next) => {
         // Get user by email from JWT token
         const userResponse = await userService.getUserByEmail(req.tokenData.email);
         // Check if user exists
-        if (!userResponse || userResponse.status !== 1) {
+        if (!userResponse || userResponse.status !== USERS.ACTIVE) {
             res.status(404).send({ message: "Something wrong with logged in user" });
             return
         }

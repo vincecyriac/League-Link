@@ -1,7 +1,6 @@
-import { ConstantPool } from '@angular/compiler';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Validators, FormBuilder } from '@angular/forms';
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { AppConstants } from 'src/app/app.constants';
 import { ImageCropperComponent } from 'src/app/shared/components/image-cropper/image-cropper.component';
@@ -9,24 +8,28 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { TeamsService } from 'src/app/shared/services/teams.service';
 
 @Component({
-  selector: 'app-create',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-details',
+  templateUrl: './details.component.html',
+  styleUrls: ['./details.component.css']
 })
-export class CreateComponent implements OnDestroy {
+export class DetailsComponent implements OnInit, OnDestroy {
+
+  fileCroppedLogo: any = null;
+  filePreview !: any;
+  blnShowSpinner: boolean = false;
+  objTeamDetails: any;
 
   private objDestroyed$ = new Subject();
 
-  fileCroppedLogo !: any;
-  filePreview !: any;
-  blnShowSpinner: boolean = false;
+  @Input() intTeamId !: number;
 
-  objTeamCreateForm = this.objFormBuilder.group({
+  objTeamUpdateForm = this.objFormBuilder.group({
     name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(AppConstants.NAME_REGEX)]],
     manager: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50), Validators.pattern(AppConstants.NAME_REGEX)]],
-    image: ['', [Validators.required]]
+    image: ['']
   });
+
+
 
   constructor(
     private objCommonService: CommonService,
@@ -35,24 +38,39 @@ export class CreateComponent implements OnDestroy {
     private objChRef: ChangeDetectorRef,
     private objModalService: NgbModal,
     private objActiveModal: NgbActiveModal
-  ) { }
+    ) { }
+
+    ngOnInit(): void {
+    this.getTeamDetails();
+  }
 
   ngOnDestroy() {
     this.objDestroyed$.next(void 0);
     this.objDestroyed$.complete();
   }
 
-  createTeam() {
-    if (this.objTeamCreateForm.valid) {
+  getTeamDetails() {
+    this.objTeamsService.getTeamById(this.intTeamId).pipe(takeUntil(this.objDestroyed$)).subscribe({
+      next: (objResponse) => {
+        this.objTeamDetails = objResponse
+        this.objTeamUpdateForm.patchValue(objResponse)
+        this.filePreview = objResponse.image_url
+        this.objChRef.markForCheck();
+      }
+    })
+  }
+
+  updateTeam() {
+    if (this.objTeamUpdateForm.valid) {
       this.blnShowSpinner = true;
       let objPayload = new FormData()
-      objPayload.append('name', this.objTeamCreateForm?.value?.name || '');
-      objPayload.append('manager', this.objTeamCreateForm.value.manager || '');
+      objPayload.append('name', this.objTeamUpdateForm?.value?.name || '');
+      objPayload.append('manager', this.objTeamUpdateForm.value.manager || '');
       objPayload.append('image', this.fileCroppedLogo);
-      this.objTeamsService.createTeam(objPayload).pipe(takeUntil(this.objDestroyed$)).subscribe({
+      this.objTeamsService.updateTeam(this.intTeamId, objPayload).pipe(takeUntil(this.objDestroyed$)).subscribe({
         next: () => {
           this.blnShowSpinner = false;
-          this.objCommonService.showSuccess("Team created")
+          this.objCommonService.showSuccess("Team updated")
           this.openCloseModal(1)
         },
         error: () => {
@@ -63,29 +81,20 @@ export class CreateComponent implements OnDestroy {
     }
   }
 
-  openCloseModal(intStatus: number) {
-    // Check if intStatus is 1
-    if (intStatus == 1) {
-      // Close the modal and pass a value 2
-      this.objActiveModal.close(2);
-    } else {
-      // Dismiss the modal
-      this.objActiveModal.dismiss();
-    }
-  }
-
   handleImageSelect(objEvent: any) {
+    this.objTeamUpdateForm.controls['image'].clearValidators();
+    this.objTeamUpdateForm.controls['image'].setValidators([Validators.required]);
+    this.objTeamUpdateForm.controls['image'].updateValueAndValidity();
+    this.fileCroppedLogo = null;
+    this.filePreview = null;
+    this.objChRef.markForCheck()
     let selectedFile = objEvent.target.files[0]
     if (objEvent.target.files.length != 1) {
-      this.fileCroppedLogo = null;
-      this.filePreview = null;
       return
     }
     else if (!['png', 'jpg', 'jpeg'].includes(selectedFile.name.substr(selectedFile.name.lastIndexOf('.') + 1).toLocaleLowerCase()) || selectedFile.name.length > 225) {
-      this.objTeamCreateForm.controls['image'].setErrors({ 'invalidFile': true });
+      this.objTeamUpdateForm.controls['image'].setErrors({ 'invalidFile': true });
       this.objChRef.markForCheck();
-      this.fileCroppedLogo = null;
-      this.filePreview = null;
     }
     else {
       this.openFileCropModal(objEvent)
@@ -106,8 +115,20 @@ export class CreateComponent implements OnDestroy {
     }, (reason) => {
       this.fileCroppedLogo = null;
       this.filePreview = null;
-      this.objTeamCreateForm.controls['image'].setValue('')
+      this.objTeamUpdateForm.controls['image'].setValue('')
       this.objChRef.markForCheck();
     });
   }
+
+  openCloseModal(intStatus: number) {
+    // Check if intStatus is 1
+    if (intStatus == 1) {
+      // Close the modal and pass a value 2
+      this.objActiveModal.close(2);
+    } else {
+      // Dismiss the modal
+      this.objActiveModal.dismiss();
+    }
+  }
+
 }

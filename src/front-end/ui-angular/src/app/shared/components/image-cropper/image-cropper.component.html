@@ -1,0 +1,11 @@
+<div class="file-cropper mt-4">
+  <image-cropper [imageChangedEvent]="fileCropperLogo" [maintainAspectRatio]="true" [containWithinAspectRatio]="false"
+    [aspectRatio]="1 / 1" [resizeToWidth]="500" [cropperMinWidth]="500" [onlyScaleDown]="true" [roundCropper]="true"
+    (imageCropped)="imageCropped($event)" [canvasRotation]="0" [alignImage]="'center'" format="png"></image-cropper>
+</div>
+<div class="row modal-foot m-4">
+  <div class="col-12 text-center">
+    <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
+    <button class="btn btn-primary" type="submit" (click)="openCloseModal(1)">Crop</button>
+  </div>
+</div>

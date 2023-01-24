@@ -26,10 +26,18 @@ export class TeamsService {
 
   //delete api for deleting a particular team
   public deleteTeamById(intTeamId : number): Observable<any> {
-    return this.objHttpClient.delete(`${this.API_ENDPOINT}teams/${intTeamId}&`)
+    return this.objHttpClient.delete(`${this.API_ENDPOINT}teams/${intTeamId}`)
   }
   //delete api for deleting a particular team
   public createTeam(objPayload : any): Observable<any> {
     return this.objHttpClient.post(`${this.API_ENDPOINT}teams`,objPayload)
+  }
+  //get api for deleting a particular team
+  public getTeamById(intTeamId : any): Observable<any> {
+    return this.objHttpClient.get(`${this.API_ENDPOINT}teams/${intTeamId}`)
+  }
+  //delete api for deleting a particular team
+  public updateTeam(intTeamId:number, objPayload : any): Observable<any> {
+    return this.objHttpClient.put(`${this.API_ENDPOINT}teams/${intTeamId}`,objPayload)
   }
 }

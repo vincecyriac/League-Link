@@ -51,7 +51,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if (objRequest.method === 'POST' && (objRequest.url.includes('/login') || objRequest.url.includes('/user'))) {
       // Do not add the access token to these specific routes
       return objRequest.clone({ setHeaders: { 'Content-Type': `application/json; charset=utf-8`, } })
-    } else if(objRequest.method === 'POST' && (objRequest.url.includes('/team') || objRequest.url.includes('/tournament'))){
+    } else if((objRequest.method === 'POST' || objRequest.method === 'PUT') && (objRequest.url.includes('/team') || objRequest.url.includes('/tournament'))){
       return objRequest.clone({
         setHeaders: { 'Authorization': `LEAGUE_LINK ${access_token}` }
       })

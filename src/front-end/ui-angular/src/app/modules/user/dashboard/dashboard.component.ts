@@ -32,7 +32,6 @@ export class DashboardComponent implements OnInit {
     this.objCommonService.getSpinnerStatus.pipe(takeUntil(this.objDestroyed$)).subscribe({
       next: (objResponse) => {
         this.blnShowSpinner = objResponse;
-        console.log("Show spinner :", this.blnShowSpinner)
         this,this.objChRef.detectChanges()
         this.objChRef.markForCheck()
       }

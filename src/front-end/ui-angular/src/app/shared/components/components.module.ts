@@ -6,6 +6,8 @@ import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { ImageCropperComponent } from './image-cropper/image-cropper.component';
+import { ImageCropperModule } from 'ngx-image-cropper';
 
 
 
@@ -14,12 +16,14 @@ import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
     FooterComponent,
     HeaderComponent,
     SpinnerComponent,
-    ConfirmModalComponent
+    ConfirmModalComponent,
+    ImageCropperComponent
   ],
   imports: [
     CommonModule,
     RouterModule,
-    NgbModule
+    NgbModule,
+    ImageCropperModule
   ],
   exports: [
     FooterComponent,

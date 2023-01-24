@@ -2,13 +2,14 @@ const { Teams, Players } = require("../models/index.model");
 const sequelize = require("../config/db.config");
 const { deleteFromS3 } = require("../utils/s3.utils");
 const { Op } = require('sequelize');
+const { TEAMS, PLAYERS } = require('../config/status.config')
 
 // Retrieves all teams that belong to a particular user
 async function getAllTeams(userId, limit, offset, fields, name) {
     // Find all teams with status 1 and the given user ID
     const teams = await Teams.findAndCountAll({
         where: {
-            status: 1,
+            status: TEAMS.ACTIVE,
             user_id: userId,
             name: {
                 [Op.like]: `%${name || ''}%`
@@ -45,7 +46,7 @@ async function getTeamById(userId, teamId) {
     // and include its players in the results
     const team = await Teams.findOne({
         where: {
-            status: 1,
+            status: TEAMS.ACTIVE,
             user_id: userId,
             id: teamId
         },
@@ -56,7 +57,7 @@ async function getTeamById(userId, teamId) {
                 as: "players",
                 attributes: ["id", "name", "phone"],
                 where: {
-                    status: 1
+                    status: PLAYERS.ACTIVE
                 },
                 required: false
             }
@@ -114,7 +115,7 @@ async function deleteTeam(teamId) {
 
         // soft delete the players with the given ids 
         const team = await Teams.findByPk(teamId)
-        await team.update({ status: 0 }, { transaction });
+        await team.update({ status: TEAMS.DELETED }, { transaction });
         await deleteFromS3(team.image_url)
         // If the team is successfully deleted and file removed from s3, commit the transaction
         await transaction.commit();
