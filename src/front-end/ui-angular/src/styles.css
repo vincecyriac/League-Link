@@ -75,6 +75,16 @@ body {
   background-color: rgba(244, 106, 106, 1) !important;
   border-color: transparent !important;
 }
+.btn-soft-info {
+  color: #50a5f1 !important;
+  background-color: rgba(80,165,241,.1) !important;
+  border-color: transparent !important;
+}
+.btn-soft-info:hover {
+  color: #fff !important;
+  background-color: rgba(80,165,241,1) !important;
+  border-color: transparent !important;
+}
 
 .primary-bg.bg-soft {
   background-color: rgba(85, 110, 230, .25) !important;

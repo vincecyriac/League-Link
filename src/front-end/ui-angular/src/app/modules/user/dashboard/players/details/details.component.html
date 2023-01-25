@@ -13,11 +13,6 @@
   <div class="modal-body pb-0 pt-0">
     <form [formGroup]="objPlayerUpdateForm" #objFormSelector="ngForm" (ngSubmit)="updateUser()">
       <div class="row">
-        <div class="col-12">
-          <h6>
-            Update plater details
-          </h6>
-        </div>
         <div class="col-sm-12 col-md-4 mb-2 mb-md-0 form-group">
           <label class="required">Name</label>
           <input type="text" class="form-control" placeholder="Name" formControlName="name">
@@ -37,7 +32,7 @@
             </ng-container>
           </select>
         </div>
-        <div class="col-12 modal-foot mt-4 text-center">
+        <div class="col-12 modal-foot mt-4 mb-3 text-center">
           <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
           <button class="btn btn-primary" type="submit">Update</button>
         </div>

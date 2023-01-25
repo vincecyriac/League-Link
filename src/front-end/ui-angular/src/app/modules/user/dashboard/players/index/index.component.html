@@ -85,8 +85,8 @@
                 <div class="mod-table-cell">{{player.created_at | date}}</div>
                 <div class="mod-table-cell">{{player.updated_at | date}}</div>
                 <div class="mod-table-cell">
-                  <button class="btn btn-sm btn-soft-primary" placement="auto" ngbTooltip="View player details" (click)="openModal(3, player.id, 'xl')">
-                    <i class="fa-solid fa-eye"></i>
+                  <button class="btn btn-sm btn-soft-primary" placement="auto" ngbTooltip="Edit player details" (click)="openModal(3, player.id)">
+                    <i class="fa-solid fa-pen"></i>
                   </button>
                 </div>
               </div>

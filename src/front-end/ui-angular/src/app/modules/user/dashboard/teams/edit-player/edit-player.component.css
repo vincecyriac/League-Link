@@ -1,0 +1,26 @@
+.player-tag {
+  padding: 8px;
+  color: #556ee6 !important;
+  background-color: rgba(85, 110, 230, .1) !important;
+  border-radius: 5px;
+  margin: 5px;
+}
+.player-tag-select {
+  padding: 8px;
+  color: #50a5f1 !important;
+  background-color: rgba(80,165,241,.1) !important;
+  border-color: transparent !important;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.player-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.player-tag, .player-tag-select i{
+  cursor: pointer !important;
+}
+.player-tag i:hover{
+  color: #f46a6a;
+}

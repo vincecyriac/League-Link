@@ -1,0 +1,48 @@
+
+<div class="details-modal p-2 pe-5 ps-5">
+  <ng-container *ngIf="blnShowSpinner">
+    <app-spinner [blnRelativeClass]="true"></app-spinner>
+  </ng-container>
+  <div class="row mt-3 mb-3">
+    <div class="col-12 text-center">
+      <h5>
+        Add/Remove Players
+      </h5>
+    </div>
+    <div class="col-12 mt-3">
+      <div>Selected players</div>
+      <div class="player-list">
+        <ng-container *ngIf="arrCurrentList.length == 0">
+          <small>Please select players from below to add to the team</small>
+        </ng-container>
+        <ng-container *ngFor="let player of arrCurrentList">
+          <div class="player-tag">
+            <span>{{player.name}}</span>
+            <i class="fa-solid fa-circle-xmark ms-2" (click)="clearPlayer(player.id)"></i>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="mt-4 mb-2">Add players</div>
+    <div class="player-select mb-2">
+      <input type="text" class="form-control" placeholder="Search player" (keyup)="filterPlayers($event)">
+    </div>
+    <div class="player-list">
+      <ng-container *ngIf="arrFilteredPlayers.length == 0">
+        <small>No players found based on the search</small>
+      </ng-container>
+      <ng-container *ngFor="let player of arrFilteredPlayers">
+        <div class="player-tag-select">
+          <span>{{player.name}}</span>
+          <i class="fa-solid fa-circle-plus ms-2" (click)="addPlayer(player)"></i>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="modal-body pb-4 pt-0">
+    <div class="col-12 modal-foot mt-4 text-center">
+      <button class="btn btn-secondary me-2" type="button" (click)="openCloseModal(2)">close</button>
+      <button class="btn btn-primary" type="submit" (click)="updatePlayers()">Update</button>
+    </div>
+  </div>
+</div>

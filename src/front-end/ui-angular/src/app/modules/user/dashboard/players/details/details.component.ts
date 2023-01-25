@@ -87,7 +87,7 @@ export class DetailsComponent implements OnInit {
       this.objPlayersService.updateIndividualPlayer(this.intPlayerId, this.objPlayerUpdateForm.value).pipe(takeUntil(this.objDestroyed$)).subscribe({
         // if the update is successful, show success message and close the modal
         next : () => {
-          this.objCommonService.showSuccess("User updated success");
+          this.objCommonService.showSuccess("User update success");
           this.blnShowSpinner = false;
           // triggering change detection manually
           this.objChRef.markForCheck();

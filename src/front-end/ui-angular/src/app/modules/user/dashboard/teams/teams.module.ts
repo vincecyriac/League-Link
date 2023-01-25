@@ -9,13 +9,15 @@ import { ComponentsModule } from 'src/app/shared/components/components.module';
 import { CreateComponent } from './create/create.component';
 import { DetailsComponent } from './details/details.component';
 import { TagInputModule } from 'ngx-chips';
+import { EditPlayerComponent } from './edit-player/edit-player.component';
 
 
 @NgModule({
   declarations: [
     IndexComponent,
     CreateComponent,
-    DetailsComponent
+    DetailsComponent,
+    EditPlayerComponent
   ],
   imports: [
     CommonModule,

@@ -38,4 +38,12 @@ export class PlayersService {
   public updateIndividualPlayer(intPlayerId : number, objPayload : any): Observable<any> {
     return this.objHttpClient.put(`${this.API_ENDPOINT}players/${intPlayerId}`, objPayload)
   }
+  //function to fetch api for players mini list with name and id
+  public getPlayersMiniList(): Observable<any> {
+    return this.objHttpClient.get(`${this.API_ENDPOINT}players/mini`)
+  }
+  //function to update the team of selected players
+  public updatePlayersTeam(objPlayload : any): Observable<any> {
+    return this.objHttpClient.put(`${this.API_ENDPOINT}players/team`, objPlayload)
+  }
 }

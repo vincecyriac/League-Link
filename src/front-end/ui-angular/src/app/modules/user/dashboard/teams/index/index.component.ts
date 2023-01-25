@@ -8,6 +8,7 @@ import { CommonService } from 'src/app/shared/services/common.service';
 import { TeamsService } from 'src/app/shared/services/teams.service';
 import { CreateComponent } from '../create/create.component';
 import { DetailsComponent } from '../details/details.component';
+import { EditPlayerComponent } from '../edit-player/edit-player.component';
 
 @Component({
   selector: 'app-index',
@@ -30,7 +31,8 @@ export class IndexComponent implements OnInit, OnDestroy {
   objModalList: any = {
     1: ConfirmModalComponent,
     2: CreateComponent,
-    3: DetailsComponent
+    3: DetailsComponent,
+    4: EditPlayerComponent
   }
   intSelectedTeamId !: number | null | undefined;
 
@@ -86,7 +88,7 @@ export class IndexComponent implements OnInit, OnDestroy {
     if (intModalId === 1) {
       modalRef.componentInstance.strMessage = "Are you sure you want to delete the team?";
       modalRef.componentInstance.strClass = 'btn-soft-danger';
-    } else if(intModalId === 3) {
+    } else if( intModalId != 2 ) {
       modalRef.componentInstance.intTeamId   = intTeamId;
     }
     modalRef.result.then((result) => {
