@@ -7,7 +7,8 @@ const tournamentRouter = require('./routes/tournament.routes')
 const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const { logger, logAllRequests } = require('./utils/logger.utils')
+const { logger, logAllRequests } = require('./utils/logger.utils');
+const { isValidHeader } = require('./middlewares/validate.middleware');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -17,6 +18,8 @@ app.use(express.json());
 
 // Enable CORS for all routes
 app.use(cors());
+
+app.use(isValidHeader);
 
 // Log request details on each API request
 app.use(logAllRequests);
@@ -37,7 +40,7 @@ app.use('/players', playersRouter);
 app.use('/tournaments', tournamentRouter);
 
 // Catch-all route to handle requests to routes that don't exist
-app.get('*', function (req, res) {
+app.all('/*', function (req, res) {
   res.status(400).send({ message: "Path not found" });
 });
 

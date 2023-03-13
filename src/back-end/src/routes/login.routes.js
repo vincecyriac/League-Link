@@ -7,8 +7,12 @@ const { login, getCurrentUser, refreshToken } = require('../controllers/login.co
 // Import authentication middleware functions
 const { isAuthenticated, isValidRefreshToken } = require('../middlewares/auth.middleware');
 
+//validators
+const { loginValidator } = require('../vaidators/login.validator');
+
+
 // Route for logging in
-router.post('/', login);
+router.post('/', loginValidator, login);
 
 // Route for getting current user's information (protected route, requires authentication)
 router.get('/', isAuthenticated, getCurrentUser);
