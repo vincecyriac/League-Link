@@ -49,6 +49,7 @@ const getplayerById = async (req, res, next) => {
 };
 
 const createPlayers = async (req, res, next) => {
+    console.log(req.file)
     try {
         // Call the service function to create players
         req.body = req.body.map(item => { return { ...item, user_id: req.tokenData.id }; });
