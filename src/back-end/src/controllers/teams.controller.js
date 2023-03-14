@@ -10,7 +10,6 @@ const getAllTeams = async (req, res, next) => {
         // Send the response back to the client
         res.send(teamsResponse);
     } catch (error) {
-        console.log(error)
         // return bad request
         global.logger.error(error.stack)
         res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
@@ -101,7 +100,6 @@ const deleteTeam = async (req, res, next) => {
     try {
         // Call the service function to update the team
         const teamExist = await teamsService.getTeamById(req.tokenData.id,req.params.teamId);
-        console.log(teamExist)
         if (!teamExist) {
             // Return error response if team not found
             return res.status(404).send({ message: "Team not found" });
