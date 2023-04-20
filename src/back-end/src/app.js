@@ -8,6 +8,8 @@ const app = require('./server');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const { logger, logAllRequests } = require('./utils/logger.utils')
+const handleErrors  = require('./middlewares/handle-error.middleware');
+const { NotFoundException } = require('./utils/errors.utils');
 
 // Load environment variables from .env file
 dotenv.config();
@@ -37,10 +39,10 @@ app.use('/players', playersRouter);
 app.use('/tournaments', tournamentRouter);
 
 // Catch-all route to handle requests to routes that don't exist
-app.get('*', function (req, res) {
-  res.status(400).send({ message: "Path not found" });
+app.use('*', function (req, res, next) {
+  next( new NotFoundException('Invalid API'))
 });
-
+app.use(handleErrors);
 global.logger = logger
 
 // Export the app module
