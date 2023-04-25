@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const { BadRequestException } = require('./errors.utils');
 
 // Create an S3 client instance
 const s3 = new AWS.S3({
@@ -31,7 +32,7 @@ const uploadToS3 = async (req, res, next) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException("Something went wrong unexpectedly, Please find the log"))
     }
 
     // Continue to the next middleware function

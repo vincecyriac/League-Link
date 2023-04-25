@@ -1,4 +1,5 @@
 const teamsService = require('../services/teams.service');
+const { BadRequestException, NotFoundException } = require('../utils/errors.utils');
 
 // Get all teams for a user
 const getAllTeams = async (req, res, next) => {
@@ -13,7 +14,7 @@ const getAllTeams = async (req, res, next) => {
         console.log(error)
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 
@@ -29,7 +30,7 @@ const getAllTeamsMiniList = async (req, res, next) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 
@@ -45,12 +46,12 @@ const getTeamById = async (req, res, next) => {
             res.send(team);
         } else {
             // If the team was not found, throw a NotFound error
-            res.status(404).send({ message: "Team not found" });
+            next(new NotFoundException("Team not found"))
         }
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 
@@ -63,14 +64,14 @@ const createTeam = async (req, res, next) => {
         // Call the service function to create the team
         const team = await teamsService.createTeam(req.body);
         if (team instanceof Error)
-            return res.status(400).send({ message: "failed to create team, Please check yout input"});
+            next(new BadRequestException("failed to create team, Please check yout input"))
         else
             // Send a response back to the client with the created team's ID
             res.send({ message: 'Team created', id: team.id });
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 
@@ -80,12 +81,12 @@ const updateTeam = async (req, res, next) => {
         const teamExist = await teamsService.getTeamById(req.tokenData.id, req.params.teamId);
         if (!teamExist) {
             // Return error response if team not found
-            return res.status(404).send({ message: "Team not found" });
+            next(new NotFoundException("Team not found"))
         }
         //update the team
         const team = await teamsService.updateTeam(req.params.teamId, req.body)
         if (team instanceof Error)
-            return res.status(400).send({ message: "failed to update team, Please check yout input"});
+        next(new BadRequestException("failed to update team, Please check yout input"))
         else
             // Return success response with team ID
             res.send({ message: "Team updated", id: team});
@@ -93,7 +94,7 @@ const updateTeam = async (req, res, next) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 
@@ -104,12 +105,12 @@ const deleteTeam = async (req, res, next) => {
         console.log(teamExist)
         if (!teamExist) {
             // Return error response if team not found
-            return res.status(404).send({ message: "Team not found" });
+            next(new NotFoundException("Team not found"))
         }
         //update the team
         const team = await teamsService.deleteTeam(req.params.teamId)
         if (team instanceof Error)
-            return res.status(400).send({ message: "failed to delete team"});
+        next(new BadRequestException("failed to delete team"))
         else
             // Return success response with team ID
             res.send({ message: "Team deleted"});
@@ -117,7 +118,7 @@ const deleteTeam = async (req, res, next) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 

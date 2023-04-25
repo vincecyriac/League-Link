@@ -42,7 +42,9 @@ app.use('/tournaments', tournamentRouter);
 app.use('*', function (req, res, next) {
   next( new NotFoundException('Invalid API'))
 });
+
 app.use(handleErrors);
+
 global.logger = logger
 
 // Export the app module

@@ -1,4 +1,5 @@
 const tournamentService = require('../services/tournaments.service');
+const { BadRequestException } = require('../utils/errors.utils');
 
 // Get all teams for a user
 const getAllTournaments = async (req, res, next) => {
@@ -11,7 +12,7 @@ const getAllTournaments = async (req, res, next) => {
     } catch (error) {
         // return bad request
         global.logger.error(error.stack)
-        res.status(400).send({ message: "Something went wrong unexpectedly, Please find the log "});
+        next(new BadRequestException())
     }
 };
 

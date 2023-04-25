@@ -3,14 +3,14 @@ const { GeneralError } = require("../utils/errors.utils");
 const handleErrors = (err, req, res, next) => {
     if (err instanceof GeneralError) {
         return res.status(err.getCode()).json({
-            message: err.message,
-            errorCode : err.errorCode
+            message: err.message || "Something went wrong unexpectedly, Please find the log",
+            errorCode: err.errorCode
         })
     }
-    console.log(err);
+    global.logger.error(err.stack)
     return res.status(500).json({
         status: 'Internal Server Error',
-        message: err.message
+        message: "Please find the log"
     })
 }
 
